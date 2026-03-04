@@ -567,7 +567,7 @@
                 if (document.getElementById('fatt_'+f).checked) dispFatt += parseInt(document.getElementById(f+'_dispositivi').value) || 0;
             });
             const setup = dispFatt<=20 ? 260 : dispFatt<=50 ? 420 : dispFatt<=200 ? 840 : 1700;
-            const costo = (setup + 3.1*dispFatt) * 1.35;
+            const costo = (setup + 3.1*dispFatt*12) * 1.35;
             totaleOpzioni += costo;
             const desc = `Servizio Verifica Corretta Fatturazione (${dispFatt} dispositivi)`, imp = `€ ${formatEuro(costo)}`;
             righePro.push({desc, imp});

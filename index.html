@@ -3,1169 +3,702 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Economico Servizio CA</title>
+    <title>Configuratore Servizio Utility Management</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f7fa;
-            padding: 40px 20px;
-            min-height: 100vh;
-            color: #1a1a1a;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 2px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            padding: 50px 60px;
-            border-bottom: 3px solid #1e40af;
-        }
-        
-        h1 {
-            color: white;
-            font-size: 2.2em;
-            font-weight: 300;
-            letter-spacing: -0.5px;
-            margin: 0;
-        }
-        
-        .subtitle {
-            color: rgba(255,255,255,0.85);
-            font-size: 1.05em;
-            margin-top: 10px;
-            font-weight: 300;
-        }
-        
-        .content {
-            padding: 50px 60px;
-        }
-        
-        .section {
-            margin-bottom: 50px;
-        }
-        
-        .section:last-child {
-            margin-bottom: 0;
-        }
-        
-        .section-header {
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .section h2 {
-            color: #1e3a8a;
-            font-size: 1.5em;
-            font-weight: 500;
-            letter-spacing: -0.3px;
-        }
-        
-        .famiglie-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-        }
-        
-        @media (max-width: 1024px) {
-            .famiglie-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .content {
-                padding: 40px 30px;
-            }
-            
-            .header {
-                padding: 40px 30px;
-            }
-        }
-        
-        .famiglia {
-            background: #fafbfc;
-            padding: 30px;
-            border-radius: 2px;
-            border: 1px solid #e5e7eb;
-            transition: all 0.2s ease;
-        }
-        
-        .famiglia:hover {
-            border-color: #1e40af;
-            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.08);
-        }
-        
-        .famiglia h3 {
-            color: #1e3a8a;
-            margin-bottom: 25px;
-            font-size: 1.15em;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .famiglia h3::before {
-            content: '';
-            width: 4px;
-            height: 20px;
-            background: #1e40af;
-            border-radius: 2px;
-        }
-        
-        .input-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: #374151;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        
-        input[type="number"],
-        input[type="text"],
-        input[type="date"],
-        select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #d1d5db;
-            border-radius: 2px;
-            font-size: 1em;
-            transition: all 0.2s ease;
-            background: white;
-            color: #1a1a1a;
-            font-family: inherit;
-        }
-        
-        input[type="number"]:disabled,
-        input[type="text"]:disabled,
-        input[type="date"]:disabled,
-        select:disabled {
-            background: #f5f7fa;
-            color: #6b7280;
-            cursor: not-allowed;
-        }
-        
-        input[type="number"]:focus,
-        input[type="text"]:focus,
-        input[type="date"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #1e40af;
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-        }
-        
-        .radio-group {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 15px;
-            padding: 5px 0;
-        }
-        
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 400;
-            text-transform: none;
-            letter-spacing: 0;
-            cursor: pointer;
-            color: #4b5563;
-        }
-        
-        .radio-group input[type="radio"] {
-            cursor: pointer;
-            width: 18px;
-            height: 18px;
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-        
-        .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #1e40af;
-        }
-        
-        .checkbox-group label {
-            margin: 0;
-            cursor: pointer;
-            font-weight: 500;
-            text-transform: none;
-            letter-spacing: 0;
-            color: #1a1a1a;
-        }
-        
-        .opzioni {
-            display: grid;
-            gap: 20px;
-        }
-        
-        .opzione-item {
-            background: #fafbfc;
-            padding: 25px;
-            border-radius: 2px;
-            border: 1px solid #e5e7eb;
-            transition: all 0.2s ease;
-        }
-        
-        .opzione-item:hover {
-            border-color: #1e40af;
-        }
-        
-        .fatturazione-famiglia {
-            margin-left: 35px;
-            margin-top: 20px;
-            padding: 20px;
-            background: white;
-            border-radius: 2px;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .fatturazione-famiglia p {
-            margin-bottom: 15px;
-            font-weight: 600;
-            color: #1e3a8a;
-            font-size: 0.95em;
-        }
-        
-        .button-container {
-            text-align: center;
-            margin-top: 50px;
-            padding-top: 40px;
-            border-top: 1px solid #e5e7eb;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            color: white;
-            border: none;
-            padding: 18px 60px;
-            font-size: 1.1em;
-            font-weight: 500;
-            border-radius: 2px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .risultato {
-            background: white;
-            padding: 0;
-            border-radius: 2px;
-            margin-top: 50px;
-            display: none;
-            border: 1px solid #e5e7eb;
-            overflow: hidden;
-        }
-        
-        .risultato-header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            padding: 30px 40px;
-        }
-        
-        .risultato h2 {
-            color: white;
-            margin: 0;
-            font-size: 1.6em;
-            font-weight: 500;
-        }
-        
-        .risultato-content {
-            padding: 40px;
-        }
-        
-        .totale-finale {
-            font-size: 2.8em;
-            font-weight: 300;
-            text-align: center;
-            margin: 30px 0;
-            color: #1e3a8a;
-            padding: 30px;
-            background: #f0f4ff;
-            border-radius: 2px;
-            letter-spacing: -1px;
-        }
-        
-        .dettaglio {
-            background: #fafbfc;
-            padding: 30px;
-            border-radius: 2px;
-            margin-bottom: 20px;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .dettaglio-line {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 1.05em;
-        }
-        
-        .dettaglio-line:last-child {
-            border-bottom: none;
-        }
-        
-        .dettaglio-line span:first-child {
-            color: #4b5563;
-            font-weight: 400;
-        }
-        
-        .dettaglio-line span:last-child {
-            color: #1a1a1a;
-            font-weight: 600;
-        }
-        
-        .copyright {
-            background: #f5f7fa;
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid #e5e7eb;
-        }
-        
-        .copyright p {
-            color: #6b7280;
-            font-size: 0.9em;
-            margin: 0;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .sezioni-nascoste {
-            display: none;
-        }
-        
-        .campo-obbligatorio {
-            border-color: #dc2626 !important;
-        }
-        
-        .messaggio-errore {
-            color: #dc2626;
-            font-size: 0.85em;
-            margin-top: 5px;
-            display: none;
-        }
-        
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            
-            .container {
-                box-shadow: none;
-            }
-            
-            button {
-                display: none;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; padding: 40px 20px; min-height: 100vh; color: #1a1a1a; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); padding: 50px 60px; border-bottom: 3px solid #1e40af; }
+        h1 { color: white; font-size: 2.2em; font-weight: 300; letter-spacing: -0.5px; margin: 0; }
+        .subtitle { color: rgba(255,255,255,0.85); font-size: 1.05em; margin-top: 10px; font-weight: 300; }
+        .content { padding: 50px 60px; }
+        .section { margin-bottom: 50px; }
+        .section-header { margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb; }
+        .section h2 { color: #1e3a8a; font-size: 1.5em; font-weight: 500; letter-spacing: -0.3px; }
+        .famiglie-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+        @media (max-width: 1024px) { .famiglie-grid { grid-template-columns: 1fr; } .content { padding: 40px 30px; } .header { padding: 40px 30px; } }
+        .famiglia { background: #fafbfc; padding: 30px; border-radius: 2px; border: 1px solid #e5e7eb; transition: all 0.2s ease; }
+        .famiglia:hover { border-color: #1e40af; box-shadow: 0 2px 8px rgba(30,64,175,0.08); }
+        .famiglia h3 { color: #1e3a8a; margin-bottom: 25px; font-size: 1.15em; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .famiglia h3::before { content: ''; width: 4px; height: 20px; background: #1e40af; border-radius: 2px; flex-shrink: 0; }
+        .famiglia-futura h3::before { background: #f59e0b; }
+        .input-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        label { display: block; font-weight: 500; margin-bottom: 8px; color: #374151; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.3px; }
+        input[type="number"], input[type="text"], input[type="date"], select { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 2px; font-size: 1em; transition: all 0.2s ease; background: white; color: #1a1a1a; font-family: inherit; }
+        input:disabled, select:disabled { background: #f5f7fa; color: #6b7280; cursor: not-allowed; }
+        input[type="number"]:focus, input[type="text"]:focus, input[type="date"]:focus, select:focus { outline: none; border-color: #1e40af; box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
+        .input-with-unit { position: relative; }
+        .input-with-unit input { padding-right: 52px; }
+        .input-unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 0.82em; font-weight: 600; pointer-events: none; }
+        .radio-group { display: flex; gap: 30px; margin-bottom: 15px; padding: 5px 0; }
+        .radio-group label { display: flex; align-items: center; gap: 8px; font-weight: 400; text-transform: none; letter-spacing: 0; cursor: pointer; color: #4b5563; }
+        .radio-group input[type="radio"] { cursor: pointer; width: 18px; height: 18px; }
+        .checkbox-group { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: #1e40af; }
+        .checkbox-group label { margin: 0; cursor: pointer; font-weight: 500; text-transform: none; letter-spacing: 0; color: #1a1a1a; }
+        .opzioni { display: grid; gap: 20px; }
+        .opzione-item { background: #fafbfc; padding: 25px; border-radius: 2px; border: 1px solid #e5e7eb; transition: all 0.2s ease; }
+        .opzione-item:hover { border-color: #1e40af; }
+        .sub-famiglie { margin-left: 35px; margin-top: 20px; padding: 20px; background: white; border-radius: 2px; border: 1px solid #e5e7eb; }
+        .sub-famiglie p { margin-bottom: 15px; font-weight: 600; color: #1e3a8a; font-size: 0.95em; }
+        .button-container { text-align: center; margin-top: 50px; padding-top: 40px; border-top: 1px solid #e5e7eb; }
+        button { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: white; border: none; padding: 18px 60px; font-size: 1.1em; font-weight: 500; border-radius: 2px; cursor: pointer; box-shadow: 0 4px 12px rgba(30,64,175,0.3); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(30,64,175,0.4); }
+        button:active { transform: translateY(0); }
+        .risultato { background: white; padding: 0; border-radius: 2px; margin-top: 50px; display: none; border: 1px solid #e5e7eb; overflow: hidden; }
+        .risultato-header { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); padding: 30px 40px; }
+        .risultato h2 { color: white; margin: 0; font-size: 1.6em; font-weight: 500; }
+        .risultato-content { padding: 40px; }
+        .totale-finale { font-size: 2.8em; font-weight: 300; text-align: center; margin: 30px 0; color: #1e3a8a; padding: 30px; background: #f0f4ff; border-radius: 2px; letter-spacing: -1px; }
+        .dettaglio { background: #fafbfc; padding: 30px; border-radius: 2px; margin-bottom: 20px; border: 1px solid #e5e7eb; }
+        .dettaglio-line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e7eb; font-size: 1.05em; }
+        .dettaglio-line:last-child { border-bottom: none; }
+        .dettaglio-line span:first-child { color: #4b5563; font-weight: 400; }
+        .dettaglio-line span:last-child { color: #1a1a1a; font-weight: 600; }
+        .sezione-label { font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #1e3a8a; padding: 18px 0 6px 0; border-bottom: 2px solid #1e40af; margin-bottom: 4px; }
+        .copyright { background: #f5f7fa; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb; }
+        .copyright p { color: #6b7280; font-size: 0.9em; margin: 0; }
+        .hidden { display: none; }
+        .sezioni-nascoste { display: none; }
+        .campo-obbligatorio { border-color: #dc2626 !important; }
+        .messaggio-errore { color: #dc2626; font-size: 0.85em; margin-top: 5px; display: none; }
+        .badge-futuro { font-size: 0.7em; font-weight: 500; color: #b45309; background: #fef3c7; border: 1px solid #f59e0b; padding: 2px 8px; border-radius: 2px; margin-left: auto; }
+        @media print { body { background: white; padding: 0; } .container { box-shadow: none; } button { display: none; } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Configuratore Economico Servizio CA</h1>
-            <div class="subtitle">Strumento di configurazione e preventivazione servizi</div>
+<div class="container">
+    <div class="header">
+        <h1>Configuratore Servizio Utility Management</h1>
+        <div class="subtitle">Strumento di configurazione e preventivazione servizi</div>
+    </div>
+
+    <div class="content">
+        <!-- INFORMAZIONI OFFERTA -->
+        <div class="section">
+            <div class="section-header"><h2>Informazioni Offerta</h2></div>
+            <div class="input-group">
+                <div>
+                    <label>Nome Cliente *</label>
+                    <input type="text" id="nome_cliente" placeholder="Ragione sociale del cliente">
+                    <div class="messaggio-errore" id="errore_nome_cliente">Campo obbligatorio</div>
+                </div>
+                <div>
+                    <label>Oggetto *</label>
+                    <select id="oggetto">
+                        <option value="">Seleziona oggetto</option>
+                        <option value="Servizio Utility Management">Servizio Utility Management</option>
+                    </select>
+                    <div class="messaggio-errore" id="errore_oggetto">Campo obbligatorio</div>
+                </div>
+            </div>
+            <div class="input-group">
+                <div>
+                    <label>Protocollo Proposta *</label>
+                    <input type="text" id="protocollo" placeholder="Numero protocollo">
+                    <div class="messaggio-errore" id="errore_protocollo">Campo obbligatorio</div>
+                </div>
+                <div>
+                    <label>Data Proposta</label>
+                    <input type="date" id="data_proposta">
+                </div>
+                <div>
+                    <label>Utility Manager *</label>
+                    <input type="text" id="utility_manager" placeholder="Nome responsabile">
+                    <div class="messaggio-errore" id="errore_utility_manager">Campo obbligatorio</div>
+                </div>
+            </div>
+            <div style="text-align:center;margin-top:30px;">
+                <button onclick="validaInformazioniOfferta(event)" style="padding:12px 40px;font-size:1em;">Continua</button>
+            </div>
         </div>
-        
-        <div class="content">
+
+        <div id="sezioni_configurazione" class="sezioni-nascoste">
+
+            <!-- MODULO BASE -->
             <div class="section">
-                <div class="section-header">
-                    <h2>Informazioni Offerta</h2>
-                </div>
-                <div class="input-group">
-                    <div>
-                        <label>Nome Cliente *</label>
-                        <input type="text" id="nome_cliente" placeholder="Ragione sociale del cliente" required>
-                        <div class="messaggio-errore" id="errore_nome_cliente">Campo obbligatorio</div>
+                <div class="section-header"><h2>Modulo BASE</h2></div>
+                <div style="margin-bottom:30px;padding:20px 25px;background:#f0f4ff;border:1px solid #c7d7fd;border-radius:2px;">
+                    <p style="font-size:0.85em;font-weight:600;color:#1e3a8a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Servizi inclusi</p>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">
+                        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.95em;"><span style="color:#1e40af;font-weight:700;">✓</span> Piattaforma Nostromo</div>
+                        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.95em;"><span style="color:#1e40af;font-weight:700;">✓</span> Ticketing e Caring</div>
+                        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.95em;"><span style="color:#1e40af;font-weight:700;">✓</span> Monitoraggio Costi e Consumi</div>
+                        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.95em;"><span style="color:#1e40af;font-weight:700;">✓</span> Previsionale di Spesa</div>
+                        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.95em;"><span style="color:#1e40af;font-weight:700;">✓</span> Negoziazione</div>
+                        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.95em;"><span style="color:#1e40af;font-weight:700;">✓</span> Prompt-IA</div>
+                        <div style="display:flex;align-items:center;gap:8px;color:#374151;font-size:0.95em;"><span style="color:#1e40af;font-weight:700;">✓</span> Audit Energetico</div>
                     </div>
-                    <div>
-                        <label>Oggetto *</label>
-                        <select id="oggetto" required>
-                            <option value="">Seleziona oggetto</option>
-                            <option value="Servizio Utility Management">Servizio Utility Management</option>
-                            <option value="Servizio Energy Management">Servizio Energy Management</option>
+                </div>
+                <div class="famiglie-grid">
+                    <!-- Energia -->
+                    <div class="famiglia">
+                        <h3>Energia</h3>
+                        <div class="input-group">
+                            <div><label>Dispositivi (POD)</label><input type="number" id="energia_dispositivi" min="0" max="1000" value="0"></div>
+                            <div><label>Operatori</label><input type="number" id="energia_operatori" min="0" value="0"></div>
+                        </div>
+                        <label>Consumo Stimato</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="energia_consumo_tipo" value="manuale" checked> Valore Preciso</label>
+                            <label><input type="radio" name="energia_consumo_tipo" value="range"> Range</label>
+                        </div>
+                        <div class="input-with-unit" id="wrap_energia">
+                            <input type="text" id="energia_consumo_manuale" placeholder="kWh annui">
+                            <span class="input-unit">kWh</span>
+                        </div>
+                        <select id="energia_consumo_range" class="hidden">
+                            <option value="50000">Fino a 100.000 kWh</option>
+                            <option value="300000">Tra 100.000 e 500.000 kWh</option>
+                            <option value="750000">Tra 500.000 e 1.000.000 kWh</option>
+                            <option value="1500000">Oltre 1.000.000 kWh</option>
                         </select>
-                        <div class="messaggio-errore" id="errore_oggetto">Campo obbligatorio</div>
+                    </div>
+                    <!-- Gas -->
+                    <div class="famiglia">
+                        <h3>Gas</h3>
+                        <div class="input-group">
+                            <div><label>Dispositivi (PDR)</label><input type="number" id="gas_dispositivi" min="0" max="1000" value="0"></div>
+                            <div><label>Operatori</label><input type="number" id="gas_operatori" min="0" value="0"></div>
+                        </div>
+                        <label>Consumo Stimato</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="gas_consumo_tipo" value="manuale" checked> Valore Preciso</label>
+                            <label><input type="radio" name="gas_consumo_tipo" value="range"> Range</label>
+                        </div>
+                        <div class="input-with-unit" id="wrap_gas">
+                            <input type="text" id="gas_consumo_manuale" placeholder="Smc annui">
+                            <span class="input-unit">Smc</span>
+                        </div>
+                        <select id="gas_consumo_range" class="hidden">
+                            <option value="50000">Fino a 100.000 smc</option>
+                            <option value="300000">Tra 100.000 e 500.000 smc</option>
+                            <option value="750000">Tra 500.000 e 1.000.000 smc</option>
+                            <option value="1500000">Oltre 1.000.000 smc</option>
+                        </select>
+                    </div>
+                    <!-- Telefonia Mobile -->
+                    <div class="famiglia">
+                        <h3>Telefonia Mobile</h3>
+                        <div class="input-group">
+                            <div><label>Dispositivi (SIM)</label><input type="number" id="mobile_dispositivi" min="0" max="1000" value="0"></div>
+                            <div><label>Operatori</label><input type="number" id="mobile_operatori" min="0" value="0"></div>
+                        </div>
+                        <label>Spesa Annua Totale</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="mobile_consumo_tipo" value="manuale" checked> Valore Preciso</label>
+                            <label><input type="radio" name="mobile_consumo_tipo" value="range"> Range</label>
+                        </div>
+                        <input type="text" id="mobile_consumo_manuale" placeholder="€ annui">
+                        <select id="mobile_consumo_range" class="hidden">
+                            <option value="50000">Fino a 100.000 €</option>
+                            <option value="200000">Tra 100.000 € e 300.000 €</option>
+                            <option value="500000">Oltre 300.000 €</option>
+                        </select>
+                    </div>
+                    <!-- Telefonia Fissa -->
+                    <div class="famiglia">
+                        <h3>Telefonia Fissa</h3>
+                        <div class="input-group">
+                            <div><label>Dispositivi (Linee)</label><input type="number" id="fisso_dispositivi" min="0" max="1000" value="0"></div>
+                            <div><label>Operatori</label><input type="number" id="fisso_operatori" min="0" value="0"></div>
+                        </div>
+                        <label>Spesa Annua Totale</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="fisso_consumo_tipo" value="manuale" checked> Valore Preciso</label>
+                            <label><input type="radio" name="fisso_consumo_tipo" value="range"> Range</label>
+                        </div>
+                        <input type="text" id="fisso_consumo_manuale" placeholder="€ annui">
+                        <select id="fisso_consumo_range" class="hidden">
+                            <option value="50000">Fino a 100.000 €</option>
+                            <option value="200000">Tra 100.000 € e 300.000 €</option>
+                            <option value="500000">Oltre 300.000 €</option>
+                        </select>
+                    </div>
+                    <!-- Connettività Internet -->
+                    <div class="famiglia">
+                        <h3>Connettività Internet</h3>
+                        <div class="input-group">
+                            <div><label>Dispositivi (Circuiti)</label><input type="number" id="internet_dispositivi" min="0" max="1000" value="0"></div>
+                            <div><label>Operatori</label><input type="number" id="internet_operatori" min="0" value="0"></div>
+                        </div>
+                        <label>Spesa Annua Totale</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="internet_consumo_tipo" value="manuale" checked> Valore Preciso</label>
+                            <label><input type="radio" name="internet_consumo_tipo" value="range"> Range</label>
+                        </div>
+                        <input type="text" id="internet_consumo_manuale" placeholder="€ annui">
+                        <select id="internet_consumo_range" class="hidden">
+                            <option value="50000">Fino a 100.000 €</option>
+                            <option value="200000">Tra 100.000 € e 300.000 €</option>
+                            <option value="500000">Oltre 300.000 €</option>
+                        </select>
                     </div>
                 </div>
+            </div>
+
+            <!-- SERVIZI DI FUTURA ATTIVAZIONE -->
+            <div class="section">
+                <div class="section-header" style="border-bottom-color:#f59e0b;">
+                    <h2 style="color:#92400e;display:flex;align-items:center;gap:10px;">
+                        <span style="background:#fef3c7;border:1px solid #f59e0b;color:#92400e;font-size:0.7em;font-weight:600;padding:3px 10px;border-radius:2px;letter-spacing:0.5px;text-transform:uppercase;">Anteprima</span>
+                        Servizi di Futura Attivazione
+                    </h2>
+                    <p style="color:#78716c;font-size:0.9em;margin-top:8px;">Questi servizi non sono ancora attivi. Gli importi calcolati saranno riportati separatamente nell'offerta a titolo indicativo.</p>
+                </div>
+                <div class="famiglie-grid">
+                    <div class="famiglia famiglia-futura" style="border-color:#fde68a;background:#fffbeb;">
+                        <h3 style="color:#92400e;">Acqua <span class="badge-futuro">Futura Attivazione</span></h3>
+                        <div class="input-group">
+                            <div><label>Dispositivi (Contatori)</label><input type="number" id="acqua_dispositivi" min="0" max="1000" value="0"></div>
+                            <div><label>Operatori</label><input type="number" id="acqua_operatori" min="0" value="0"></div>
+                        </div>
+                        <label>Consumo Stimato</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="acqua_consumo_tipo" value="manuale" checked> Valore Preciso</label>
+                            <label><input type="radio" name="acqua_consumo_tipo" value="range"> Range</label>
+                        </div>
+                        <div class="input-with-unit" id="wrap_acqua">
+                            <input type="text" id="acqua_consumo_manuale" placeholder="m³ annui">
+                            <span class="input-unit">m³</span>
+                        </div>
+                        <select id="acqua_consumo_range" class="hidden">
+                            <option value="50000">Fino a 100.000 m³</option>
+                            <option value="300000">Tra 100.000 e 500.000 m³</option>
+                            <option value="750000">Tra 500.000 e 1.000.000 m³</option>
+                            <option value="1500000">Oltre 1.000.000 m³</option>
+                        </select>
+                    </div>
+                    <div class="famiglia famiglia-futura" style="border-color:#fde68a;background:#fffbeb;">
+                        <h3 style="color:#92400e;">Gestione Rifiuti <span class="badge-futuro">Futura Attivazione</span></h3>
+                        <div class="input-group">
+                            <div><label>Siti (Punti Prelievo)</label><input type="number" id="rifiuti_dispositivi" min="0" max="1000" value="0"></div>
+                            <div><label>Operatori</label><input type="number" id="rifiuti_operatori" min="0" value="0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULO PRO -->
+            <div class="section">
+                <div class="section-header"><h2>Modulo PRO</h2></div>
+                <div class="opzioni">
+                    <!-- RFQ Dedicato -->
+                    <div class="opzione-item">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="opt_consulenza">
+                            <label for="opt_consulenza">RFQ Dedicato</label>
+                        </div>
+                        <div id="consulenza_input" class="sub-famiglie hidden">
+                            <p>Seleziona le famiglie da includere:</p>
+                            <div class="checkbox-group"><input type="checkbox" id="cons_energia" class="cons-famiglia"><label for="cons_energia">Energia</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="cons_gas" class="cons-famiglia"><label for="cons_gas">Gas</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="cons_mobile" class="cons-famiglia"><label for="cons_mobile">Telefonia Mobile</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="cons_fisso" class="cons-famiglia"><label for="cons_fisso">Telefonia Fissa</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="cons_internet" class="cons-famiglia"><label for="cons_internet">Connettività Internet</label></div>
+                            <div style="margin-top:15px;">
+                                <label>Numero di Capitolati</label>
+                                <input type="number" id="num_capitolati" min="0" value="0" readonly style="background:#f5f7fa;color:#6b7280;cursor:not-allowed;">
+                            </div>
+                            <div id="cons_sconto_info" class="hidden" style="margin-top:12px;padding:10px 14px;background:#f0f4ff;border:1px solid #c7d7fd;border-radius:2px;color:#1e3a8a;font-size:0.9em;font-weight:500;">
+                                Sconto multi-famiglia applicato: <span id="cons_sconto_label">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Verifica Fatturazione -->
+                    <div class="opzione-item">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="opt_fatturazione">
+                            <label for="opt_fatturazione">Servizio Verifica Corretta Fatturazione</label>
+                        </div>
+                        <div id="fatturazione_famiglie" class="sub-famiglie hidden">
+                            <p>Seleziona le famiglie da includere:</p>
+                            <div class="checkbox-group"><input type="checkbox" id="fatt_energia"><label for="fatt_energia">Energia</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="fatt_gas"><label for="fatt_gas">Gas</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="fatt_mobile"><label for="fatt_mobile">Telefonia Mobile</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="fatt_fisso"><label for="fatt_fisso">Telefonia Fissa</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="fatt_internet"><label for="fatt_internet">Connettività Internet</label></div>
+                        </div>
+                    </div>
+                    <!-- Priority Ticket -->
+                    <div class="opzione-item">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="opt_gestione_prioritaria">
+                            <label for="opt_gestione_prioritaria">Priority Ticket</label>
+                        </div>
+                    </div>
+                    <!-- Report Dedicati -->
+                    <div class="opzione-item">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="opt_reporting">
+                            <label for="opt_reporting">Report Dedicati</label>
+                        </div>
+                        <div id="reporting_famiglie" class="sub-famiglie hidden">
+                            <p>Seleziona le famiglie da includere:</p>
+                            <div class="checkbox-group"><input type="checkbox" id="rep_energia"><label for="rep_energia">Energia</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="rep_gas"><label for="rep_gas">Gas</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="rep_mobile"><label for="rep_mobile">Telefonia Mobile</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="rep_fisso"><label for="rep_fisso">Telefonia Fissa</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="rep_internet"><label for="rep_internet">Connettività Internet</label></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCONTISTICHE -->
+            <div class="section">
+                <div class="section-header"><h2>Scontistiche</h2></div>
                 <div class="input-group">
                     <div>
-                        <label>Protocollo Proposta *</label>
-                        <input type="text" id="protocollo" placeholder="Numero protocollo" required>
-                        <div class="messaggio-errore" id="errore_protocollo">Campo obbligatorio</div>
+                        <label>Sconto Sales (max 10%)</label>
+                        <input type="number" id="sconto_sales" min="0" max="10" step="0.1" value="0" placeholder="%">
                     </div>
-                    <div>
-                        <label>Data Proposta</label>
-                        <input type="date" id="data_proposta">
+                    <div style="display:flex;align-items:flex-end;">
+                        <div class="checkbox-group" style="margin:0;">
+                            <input type="checkbox" id="sconto_direzione">
+                            <label for="sconto_direzione">Richiedi Autorizzazione Direzione Commerciale</label>
+                        </div>
                     </div>
-                    <div>
-                        <label>Utility Manager *</label>
-                        <input type="text" id="utility_manager" placeholder="Nome responsabile" required>
-                        <div class="messaggio-errore" id="errore_utility_manager">Campo obbligatorio</div>
-                    </div>
-                </div>
-                <div style="text-align: center; margin-top: 30px;">
-                    <button onclick="validaInformazioniOfferta(event)" style="padding: 12px 40px; font-size: 1em;">
-                        Continua
-                    </button>
                 </div>
             </div>
-            
-            <div id="sezioni_configurazione" class="sezioni-nascoste">
-            
-                <div class="section">
-                    <div class="section-header">
-                        <h2>Famiglie di Servizi</h2>
-                    </div>
-                    
-                    <div class="famiglie-grid">
-                        <!-- Energia -->
-                        <div class="famiglia">
-                            <h3>Energia</h3>
-                            <div class="input-group">
-                                <div>
-                                    <label>Dispositivi (POD)</label>
-                                    <input type="number" id="energia_dispositivi" min="0" max="1000" value="0">
-                                </div>
-                                <div>
-                                    <label>Operatori</label>
-                                    <input type="number" id="energia_operatori" min="0" value="0">
-                                </div>
-                            </div>
-                            <div>
-                                <label>Consumo Stimato</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="energia_consumo_tipo" value="manuale" checked> Valore Preciso</label>
-                                    <label><input type="radio" name="energia_consumo_tipo" value="range"> Range</label>
-                                </div>
-                                <input type="text" id="energia_consumo_manuale" placeholder="kWh annui">
-                                <select id="energia_consumo_range" class="hidden">
-                                    <option value="50000">Fino a 100.000 kWh</option>
-                                    <option value="300000">Tra 100.000 e 500.000 kWh</option>
-                                    <option value="750000">Tra 500.000 e 1.000.000 kWh</option>
-                                    <option value="1500000">Oltre 1.000.000 kWh</option>
-                                </select>
-                            </div>
-                        </div>
-                    
-                        <!-- Gas -->
-                        <div class="famiglia">
-                            <h3>Gas</h3>
-                            <div class="input-group">
-                                <div>
-                                    <label>Dispositivi (PDR)</label>
-                                    <input type="number" id="gas_dispositivi" min="0" max="1000" value="0">
-                                </div>
-                                <div>
-                                    <label>Operatori</label>
-                                    <input type="number" id="gas_operatori" min="0" value="0">
-                                </div>
-                            </div>
-                            <div>
-                                <label>Consumo Stimato</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="gas_consumo_tipo" value="manuale" checked> Valore Preciso</label>
-                                    <label><input type="radio" name="gas_consumo_tipo" value="range"> Range</label>
-                                </div>
-                                <input type="text" id="gas_consumo_manuale" placeholder="Smc annui">
-                                <select id="gas_consumo_range" class="hidden">
-                                    <option value="50000">Fino a 100.000 smc</option>
-                                    <option value="300000">Tra 100.000 e 500.000 smc</option>
-                                    <option value="750000">Tra 500.000 e 1.000.000 smc</option>
-                                    <option value="1500000">Oltre 1.000.000 smc</option>
-                                </select>
-                            </div>
-                        </div>
-                    
-                        <!-- Telefonia Mobile -->
-                        <div class="famiglia">
-                            <h3>Telefonia Mobile</h3>
-                            <div class="input-group">
-                                <div>
-                                    <label>Dispositivi (SIM)</label>
-                                    <input type="number" id="mobile_dispositivi" min="0" max="1000" value="0">
-                                </div>
-                                <div>
-                                    <label>Operatori</label>
-                                    <input type="number" id="mobile_operatori" min="0" value="0">
-                                </div>
-                            </div>
-                            <div>
-                                <label>Spesa Annua Totale</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="mobile_consumo_tipo" value="manuale" checked> Valore Preciso</label>
-                                    <label><input type="radio" name="mobile_consumo_tipo" value="range"> Range</label>
-                                </div>
-                                <input type="text" id="mobile_consumo_manuale" placeholder="€ annui">
-                                <select id="mobile_consumo_range" class="hidden">
-                                    <option value="50000">Fino a 100.000 €</option>
-                                    <option value="200000">Tra 100.000 € e 300.000 €</option>
-                                    <option value="500000">Oltre 300.000 €</option>
-                                </select>
-                            </div>
-                        </div>
-                    
-                        <!-- Telefonia Fissa -->
-                        <div class="famiglia">
-                            <h3>Telefonia Fissa</h3>
-                            <div class="input-group">
-                                <div>
-                                    <label>Dispositivi (Linee)</label>
-                                    <input type="number" id="fisso_dispositivi" min="0" max="1000" value="0">
-                                </div>
-                                <div>
-                                    <label>Operatori</label>
-                                    <input type="number" id="fisso_operatori" min="0" value="0">
-                                </div>
-                            </div>
-                            <div>
-                                <label>Spesa Annua Totale</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="fisso_consumo_tipo" value="manuale" checked> Valore Preciso</label>
-                                    <label><input type="radio" name="fisso_consumo_tipo" value="range"> Range</label>
-                                </div>
-                                <input type="text" id="fisso_consumo_manuale" placeholder="€ annui">
-                                <select id="fisso_consumo_range" class="hidden">
-                                    <option value="50000">Fino a 100.000 €</option>
-                                    <option value="200000">Tra 100.000 € e 300.000 €</option>
-                                    <option value="500000">Oltre 300.000 €</option>
-                                </select>
-                            </div>
-                        </div>
-                    
-                        <!-- Connettività Internet -->
-                        <div class="famiglia">
-                            <h3>Connettività Internet</h3>
-                            <div class="input-group">
-                                <div>
-                                    <label>Dispositivi (Circuiti)</label>
-                                    <input type="number" id="internet_dispositivi" min="0" max="1000" value="0">
-                                </div>
-                                <div>
-                                    <label>Operatori</label>
-                                    <input type="number" id="internet_operatori" min="0" value="0">
-                                </div>
-                            </div>
-                            <div>
-                                <label>Spesa Annua Totale</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="internet_consumo_tipo" value="manuale" checked> Valore Preciso</label>
-                                    <label><input type="radio" name="internet_consumo_tipo" value="range"> Range</label>
-                                </div>
-                                <input type="text" id="internet_consumo_manuale" placeholder="€ annui">
-                                <select id="internet_consumo_range" class="hidden">
-                                    <option value="50000">Fino a 100.000 €</option>
-                                    <option value="200000">Tra 100.000 € e 300.000 €</option>
-                                    <option value="500000">Oltre 300.000 €</option>
-                                </select>
-                            </div>
-                        </div>
-                    
-                        <!-- Acqua -->
-                        <div class="famiglia">
-                            <h3>Acqua</h3>
-                            <div class="input-group">
-                                <div>
-                                    <label>Dispositivi (Contatori)</label>
-                                    <input type="number" id="acqua_dispositivi" min="0" max="1000" value="0">
-                                </div>
-                                <div>
-                                    <label>Operatori</label>
-                                    <input type="number" id="acqua_operatori" min="0" value="0">
-                                </div>
-                            </div>
-                            <div>
-                                <label>Consumo Stimato</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="acqua_consumo_tipo" value="manuale" checked> Valore Preciso</label>
-                                    <label><input type="radio" name="acqua_consumo_tipo" value="range"> Range</label>
-                                </div>
-                                <input type="text" id="acqua_consumo_manuale" placeholder="m³ annui">
-                                <select id="acqua_consumo_range" class="hidden">
-                                    <option value="50000">Fino a 100.000 m³</option>
-                                    <option value="300000">Tra 100.000 e 500.000 m³</option>
-                                    <option value="750000">Tra 500.000 e 1.000.000 m³</option>
-                                    <option value="1500000">Oltre 1.000.000 m³</option>
-                                </select>
-                            </div>
-                        </div>
-                    
-                        <!-- Gestione Rifiuti -->
-                        <div class="famiglia">
-                            <h3>Gestione Rifiuti</h3>
-                            <div class="input-group">
-                                <div>
-                                    <label>Siti (Punti Prelievo)</label>
-                                    <input type="number" id="rifiuti_dispositivi" min="0" max="1000" value="0">
-                                </div>
-                                <div>
-                                    <label>Operatori</label>
-                                    <input type="number" id="rifiuti_operatori" min="0" value="0">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="section">
-                    <div class="section-header">
-                        <h2>Opzioni Aggiuntive</h2>
-                    </div>
-                    <div class="opzioni">
-                        <div class="opzione-item">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="opt_gestione_prioritaria">
-                                <label for="opt_gestione_prioritaria">Gestione Prioritaria Ticket</label>
-                            </div>
-                        </div>
-                        
-                        <div class="opzione-item">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="opt_reporting">
-                                <label for="opt_reporting">Reporting Custom</label>
-                            </div>
-                            <div id="reporting_famiglie" class="fatturazione-famiglia hidden">
-                                <p>Seleziona le famiglie da includere:</p>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="rep_energia">
-                                    <label for="rep_energia">Energia</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="rep_gas">
-                                    <label for="rep_gas">Gas</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="rep_mobile">
-                                    <label for="rep_mobile">Telefonia Mobile</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="rep_fisso">
-                                    <label for="rep_fisso">Telefonia Fissa</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="rep_internet">
-                                    <label for="rep_internet">Connettività Internet</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="rep_acqua">
-                                    <label for="rep_acqua">Acqua</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="rep_rifiuti">
-                                    <label for="rep_rifiuti">Gestione Rifiuti</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="opzione-item">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="opt_ai">
-                                <label for="opt_ai">Servizi AI Avanzati</label>
-                            </div>
-                        </div>
-                        
-                        <div class="opzione-item">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="opt_fatturazione">
-                                <label for="opt_fatturazione">Servizio Verifica Corretta Fatturazione</label>
-                            </div>
-                            <div id="fatturazione_famiglie" class="fatturazione-famiglia hidden">
-                                <p>Seleziona le famiglie da includere:</p>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="fatt_energia">
-                                    <label for="fatt_energia">Energia</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="fatt_gas">
-                                    <label for="fatt_gas">Gas</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="fatt_mobile">
-                                    <label for="fatt_mobile">Telefonia Mobile</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="fatt_fisso">
-                                    <label for="fatt_fisso">Telefonia Fissa</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="fatt_internet">
-                                    <label for="fatt_internet">Connettività Internet</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="opzione-item">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="opt_consulenza">
-                                <label for="opt_consulenza">Servizio Consulenza per Gare</label>
-                            </div>
-                            <div id="consulenza_input" class="fatturazione-famiglia hidden">
-                                <p>Seleziona le famiglie da includere:</p>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="cons_energia" class="cons-famiglia">
-                                    <label for="cons_energia">Energia</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="cons_gas" class="cons-famiglia">
-                                    <label for="cons_gas">Gas</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="cons_mobile" class="cons-famiglia">
-                                    <label for="cons_mobile">Telefonia Mobile</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="cons_fisso" class="cons-famiglia">
-                                    <label for="cons_fisso">Telefonia Fissa</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="cons_internet" class="cons-famiglia">
-                                    <label for="cons_internet">Connettività Internet</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="cons_acqua" class="cons-famiglia">
-                                    <label for="cons_acqua">Acqua</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="cons_rifiuti" class="cons-famiglia">
-                                    <label for="cons_rifiuti">Gestione Rifiuti</label>
-                                </div>
-                                <div style="margin-top: 15px;">
-                                    <label>Numero di Capitolati</label>
-                                    <input type="number" id="num_capitolati" min="0" value="0" readonly style="background:#f5f7fa; color:#6b7280; cursor:not-allowed;">
-                                </div>
-                                <div id="cons_sconto_info" class="hidden" style="margin-top: 12px; padding: 10px 14px; background: #f0f4ff; border: 1px solid #c7d7fd; border-radius: 2px; color: #1e3a8a; font-size: 0.9em; font-weight: 500;">
-                                    Sconto multi-famiglia applicato: <span id="cons_sconto_label">-</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="section">
-                    <div class="section-header">
-                        <h2>Scontistiche</h2>
-                    </div>
-                    <div class="input-group">
-                        <div>
-                            <label>Sconto Sales (max 10%)</label>
-                            <input type="number" id="sconto_sales" min="0" max="10" step="0.1" value="0" placeholder="%">
-                        </div>
-                        <div style="display: flex; align-items: flex-end;">
-                            <div class="checkbox-group" style="margin: 0;">
-                                <input type="checkbox" id="sconto_direzione">
-                                <label for="sconto_direzione">Richiedi Autorizzazione Direzione Commerciale</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="button-container">
-                    <button onclick="calcolaOfferta()">Genera Offerta</button>
-                </div>
-            
-            </div>
-            
-            <div class="risultato" id="risultato">
-                <div class="risultato-header">
-                    <h2>Riepilogo Offerta</h2>
-                </div>
-                <div class="risultato-content">
-                    <div id="dettagli"></div>
-                    <div class="totale-finale" id="totale_finale"></div>
-                    <div style="text-align: center; margin-top: 30px;">
-                        <button onclick="downloadOfferta()" style="background: white; color: #1e3a8a; border: 2px solid #1e3a8a; padding: 12px 40px; font-size: 1em;">
-                            Scarica Offerta (TXT)
-                        </button>
-                    </div>
-                </div>
+
+            <div class="button-container">
+                <button onclick="calcolaOfferta()">Genera Offerta</button>
             </div>
         </div>
-        
-        <div class="copyright">
-            <p>Copyright © 2026 FBC Group - Ad uso esclusivo interno</p>
+
+        <!-- RISULTATO -->
+        <div class="risultato" id="risultato">
+            <div class="risultato-header"><h2>Riepilogo Offerta</h2></div>
+            <div class="risultato-content">
+                <div id="dettagli"></div>
+                <div class="totale-finale" id="totale_finale"></div>
+                <div style="text-align:center;margin-top:30px;">
+                    <button onclick="downloadOfferta()" style="background:white;color:#1e3a8a;border:2px solid #1e3a8a;padding:12px 40px;font-size:1em;">Scarica Offerta (TXT)</button>
+                </div>
+            </div>
         </div>
     </div>
-    
-    <script>
-        document.getElementById('data_proposta').valueAsDate = new Date();
-        
-        function validaInformazioniOfferta(event) {
-            const nomeCliente = document.getElementById('nome_cliente').value.trim();
-            const oggetto = document.getElementById('oggetto').value.trim();
-            const protocollo = document.getElementById('protocollo').value.trim();
-            const utilityManager = document.getElementById('utility_manager').value.trim();
-            
-            let isValid = true;
-            
-            document.getElementById('errore_nome_cliente').style.display = 'none';
-            document.getElementById('errore_oggetto').style.display = 'none';
-            document.getElementById('errore_protocollo').style.display = 'none';
-            document.getElementById('errore_utility_manager').style.display = 'none';
-            document.getElementById('nome_cliente').classList.remove('campo-obbligatorio');
-            document.getElementById('oggetto').classList.remove('campo-obbligatorio');
-            document.getElementById('protocollo').classList.remove('campo-obbligatorio');
-            document.getElementById('utility_manager').classList.remove('campo-obbligatorio');
-            
-            if (!nomeCliente) {
-                document.getElementById('errore_nome_cliente').style.display = 'block';
-                document.getElementById('nome_cliente').classList.add('campo-obbligatorio');
-                isValid = false;
+
+    <div class="copyright"><p>Copyright © 2026 FBC Group - Ad uso esclusivo interno</p></div>
+</div>
+
+<script>
+    document.getElementById('data_proposta').valueAsDate = new Date();
+
+    // ── VALIDAZIONE ───────────────────────────────────────────────────────────
+    function validaInformazioniOfferta(event) {
+        const fields = ['nome_cliente','oggetto','protocollo','utility_manager'];
+        let ok = true;
+        fields.forEach(id => {
+            document.getElementById('errore_' + id).style.display = 'none';
+            document.getElementById(id).classList.remove('campo-obbligatorio');
+            if (!document.getElementById(id).value.trim()) {
+                document.getElementById('errore_' + id).style.display = 'block';
+                document.getElementById(id).classList.add('campo-obbligatorio');
+                ok = false;
             }
-            if (!oggetto) {
-                document.getElementById('errore_oggetto').style.display = 'block';
-                document.getElementById('oggetto').classList.add('campo-obbligatorio');
-                isValid = false;
-            }
-            if (!protocollo) {
-                document.getElementById('errore_protocollo').style.display = 'block';
-                document.getElementById('protocollo').classList.add('campo-obbligatorio');
-                isValid = false;
-            }
-            if (!utilityManager) {
-                document.getElementById('errore_utility_manager').style.display = 'block';
-                document.getElementById('utility_manager').classList.add('campo-obbligatorio');
-                isValid = false;
-            }
-            
-            if (isValid) {
-                document.getElementById('nome_cliente').disabled = true;
-                document.getElementById('oggetto').disabled = true;
-                document.getElementById('protocollo').disabled = true;
-                document.getElementById('data_proposta').disabled = true;
-                document.getElementById('utility_manager').disabled = true;
-                event.target.style.display = 'none';
-                document.getElementById('sezioni_configurazione').classList.remove('sezioni-nascoste');
-            }
-        }
-        
-        document.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const famiglia = this.name.replace('_consumo_tipo', '');
-                const manuale = document.getElementById(famiglia + '_consumo_manuale');
-                const range = document.getElementById(famiglia + '_consumo_range');
-                if (this.value === 'manuale') {
-                    manuale.classList.remove('hidden');
-                    range.classList.add('hidden');
-                } else {
-                    manuale.classList.add('hidden');
-                    range.classList.remove('hidden');
-                }
-            });
         });
-        
-        function formatNumber(n) {
-            return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        if (ok) {
+            fields.forEach(id => document.getElementById(id).disabled = true);
+            document.getElementById('data_proposta').disabled = true;
+            event.target.style.display = 'none';
+            document.getElementById('sezioni_configurazione').classList.remove('sezioni-nascoste');
         }
-        
-        function setupNumberFormatting(inputId) {
-            const input = document.getElementById(inputId);
-            if (!input) return;
-            input.addEventListener('input', function(e) {
-                let val = e.target.value.replace(/\./g, '');
-                if (val !== '') e.target.value = formatNumber(val);
-            });
-            input.addEventListener('blur', function(e) {
-                let val = e.target.value.replace(/\./g, '');
-                if (val !== '') e.target.value = formatNumber(val);
-            });
+    }
+
+    // ── RADIO TOGGLE ──────────────────────────────────────────────────────────
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const f = this.name.replace('_consumo_tipo','');
+            const wrap = document.getElementById('wrap_' + f);
+            const manuale = document.getElementById(f + '_consumo_manuale');
+            const range = document.getElementById(f + '_consumo_range');
+            const isManuale = this.value === 'manuale';
+            if (wrap) wrap.classList.toggle('hidden', !isManuale);
+            else if (manuale) manuale.classList.toggle('hidden', !isManuale);
+            if (range) range.classList.toggle('hidden', isManuale);
+        });
+    });
+
+    // ── FORMATTAZIONE ─────────────────────────────────────────────────────────
+    function formatNumber(n) { return n.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+    ['energia','gas','mobile','fisso','internet','acqua'].forEach(f => {
+        const el = document.getElementById(f + '_consumo_manuale');
+        if (!el) return;
+        const fmt = e => { const v = e.target.value.replace(/\./g,''); if (v) e.target.value = formatNumber(v); };
+        el.addEventListener('input', fmt);
+        el.addEventListener('blur', fmt);
+    });
+
+    function formatEuro(n) {
+        const parts = n.toFixed(2).split('.');
+        return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.') + ',' + parts[1];
+    }
+
+    // ── TOGGLE OPZIONI ────────────────────────────────────────────────────────
+    document.getElementById('opt_reporting').addEventListener('change', function() {
+        document.getElementById('reporting_famiglie').classList.toggle('hidden', !this.checked);
+        if (!this.checked) document.querySelectorAll('[id^="rep_"]').forEach(cb => cb.checked = false);
+    });
+    document.getElementById('opt_fatturazione').addEventListener('change', function() {
+        document.getElementById('fatturazione_famiglie').classList.toggle('hidden', !this.checked);
+        if (!this.checked) document.querySelectorAll('[id^="fatt_"]').forEach(cb => cb.checked = false);
+    });
+    document.getElementById('opt_consulenza').addEventListener('change', function() {
+        document.getElementById('consulenza_input').classList.toggle('hidden', !this.checked);
+        if (!this.checked) {
+            document.querySelectorAll('.cons-famiglia').forEach(cb => cb.checked = false);
+            document.getElementById('num_capitolati').value = 0;
+            document.getElementById('cons_sconto_info').classList.add('hidden');
         }
-        
-        setupNumberFormatting('energia_consumo_manuale');
-        setupNumberFormatting('gas_consumo_manuale');
-        setupNumberFormatting('mobile_consumo_manuale');
-        setupNumberFormatting('fisso_consumo_manuale');
-        setupNumberFormatting('internet_consumo_manuale');
-        setupNumberFormatting('acqua_consumo_manuale');
-        
-        document.getElementById('opt_reporting').addEventListener('change', function() {
-            document.getElementById('reporting_famiglie').classList.toggle('hidden', !this.checked);
-            if (!this.checked) {
-                document.querySelectorAll('[id^="rep_"]').forEach(cb => cb.checked = false);
+    });
+    document.querySelectorAll('.cons-famiglia').forEach(cb => {
+        cb.addEventListener('change', function() {
+            const count = document.querySelectorAll('.cons-famiglia:checked').length;
+            document.getElementById('num_capitolati').value = count;
+            const scontoMap = {2:'10%',3:'15%',4:'20%',5:'25%'};
+            const info = document.getElementById('cons_sconto_info');
+            if (scontoMap[count]) { document.getElementById('cons_sconto_label').textContent = scontoMap[count]; info.classList.remove('hidden'); }
+            else info.classList.add('hidden');
+        });
+    });
+
+    // ── UTILITY ───────────────────────────────────────────────────────────────
+    function getConsumo(f) {
+        const tipo = document.querySelector(`input[name="${f}_consumo_tipo"]:checked`).value;
+        if (tipo === 'manuale') return parseFloat(document.getElementById(f + '_consumo_manuale').value.replace(/\./g,'')) || 0;
+        return parseFloat(document.getElementById(f + '_consumo_range').value) || 0;
+    }
+
+    function percConsumo(c) {
+        if (c <= 0) return 0;
+        const t = (Math.min(Math.max(Math.log(c), Math.log(5000)), Math.log(5000000)) - Math.log(5000)) / (Math.log(5000000) - Math.log(5000));
+        return (2 - 1.8 * t) / 100;
+    }
+
+    function calcolaFamiglia(f, totDisp, totCons) {
+        const disp = parseInt(document.getElementById(f.id + '_dispositivi').value) || 0;
+        if (disp === 0) return null;
+        let pu;
+        if (f.id === 'internet') pu = Math.max(10, 250 - (disp-1)*0.24);
+        else if (f.id === 'mobile') pu = disp <= 5 ? 100 : Math.max(10, 100-(disp-5)*0.09);
+        else if (f.id === 'rifiuti') pu = 300;
+        else {
+            const rid = (Math.min(0.95, totDisp/1000) + Math.min(0.95, totCons/10)) / 2;
+            pu = f.maxPrezzo - (f.maxPrezzo - f.minPrezzo) * rid;
+        }
+        let cc = 0;
+        if (['energia','gas','acqua'].includes(f.id)) { const c = getConsumo(f.id); cc = c * percConsumo(c); }
+        return { disp, costo: pu * disp + cc };
+    }
+
+    function dLine(desc, imp, bold) {
+        const style = bold ? ' style="border-top:2px solid #1e40af;margin-top:15px;padding-top:15px;font-weight:bold;"' : '';
+        return `<div class="dettaglio-line"${style}><span>${desc}</span><span>${imp}</span></div>`;
+    }
+
+    // ── CALCOLO ───────────────────────────────────────────────────────────────
+    window.offertaDati = { base:[], pro:[], riepilogo:[], totale:'' };
+
+    function calcolaOfferta() {
+        const famiglie = [
+            {nome:'Energia',               id:'energia', minPrezzo:25,  maxPrezzo:600},
+            {nome:'Gas',                   id:'gas',     minPrezzo:25,  maxPrezzo:600},
+            {nome:'Telefonia Mobile',      id:'mobile',  minPrezzo:10,  maxPrezzo:100},
+            {nome:'Telefonia Fissa',       id:'fisso',   minPrezzo:10,  maxPrezzo:100},
+            {nome:'Connettività Internet', id:'internet',minPrezzo:10,  maxPrezzo:250}
+        ];
+        const famiglieFuture = [
+            {nome:'Acqua',            id:'acqua',   minPrezzo:25,  maxPrezzo:600},
+            {nome:'Gestione Rifiuti', id:'rifiuti', minPrezzo:300, maxPrezzo:300}
+        ];
+
+        let totDisp = 0, totCons = 0;
+        famiglie.forEach(f => {
+            totDisp += parseInt(document.getElementById(f.id+'_dispositivi').value) || 0;
+            if (!['mobile','fisso','internet'].includes(f.id)) totCons += getConsumo(f.id) / 100000;
+        });
+
+        // Righe BASE
+        const righeBase = [], righePro = [], righeRiep = [];
+        let htmlBase = '', htmlPro = '', htmlRiep = '';
+        let totaleServizio = 0;
+
+        famiglie.forEach(f => {
+            const res = calcolaFamiglia(f, totDisp, totCons);
+            if (res) {
+                totaleServizio += res.costo;
+                const desc = `${f.nome} (${res.disp} dispositivi)`;
+                const imp  = `€ ${formatEuro(res.costo)}`;
+                righeBase.push({desc, imp});
+                htmlBase += dLine(desc, imp);
             }
         });
 
-        document.getElementById('opt_fatturazione').addEventListener('change', function() {
-            document.getElementById('fatturazione_famiglie').classList.toggle('hidden', !this.checked);
-        });
-        
-        document.getElementById('opt_consulenza').addEventListener('change', function() {
-            document.getElementById('consulenza_input').classList.toggle('hidden', !this.checked);
-            if (!this.checked) {
-                document.querySelectorAll('.cons-famiglia').forEach(cb => cb.checked = false);
-                document.getElementById('num_capitolati').value = 0;
-            }
-        });
+        const totPrimaMin = totaleServizio;
+        totaleServizio = Math.max(1800, Math.min(80000, totaleServizio));
+        if (totPrimaMin > 0 && totPrimaMin < 1800) {
+            const desc = 'Servizio Assistenza (CA)', imp = `€ ${formatEuro(1800-totPrimaMin)}`;
+            righeBase.push({desc, imp});
+            htmlBase += dLine(desc, imp);
+        }
 
-        document.querySelectorAll('.cons-famiglia').forEach(cb => {
-            cb.addEventListener('change', function() {
-                const count = document.querySelectorAll('.cons-famiglia:checked').length;
-                document.getElementById('num_capitolati').value = count;
-                const scontoInfo = document.getElementById('cons_sconto_info');
-                const scontoLabel = document.getElementById('cons_sconto_label');
-                const scontoMap = { 2: '10%', 3: '15%', 4: '20%', 5: '25%' };
-                const sconto = scontoMap[count];
-                if (sconto) {
-                    scontoLabel.textContent = sconto;
-                    scontoInfo.classList.remove('hidden');
-                } else {
-                    scontoInfo.classList.add('hidden');
-                }
-            });
-        });
-        
-        function getConsumo(famiglia) {
-            const tipo = document.querySelector(`input[name="${famiglia}_consumo_tipo"]:checked`).value;
-            if (tipo === 'manuale') {
-                return parseFloat(document.getElementById(famiglia + '_consumo_manuale').value.replace(/\./g, '')) || 0;
-            } else {
-                return parseFloat(document.getElementById(famiglia + '_consumo_range').value) || 0;
-            }
-        }
-        
-        function formatEuro(numero) {
-            const parts = numero.toFixed(2).split('.');
-            return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + parts[1];
-        }
-        
-        function generaUniqueID() {
-            const timestamp = Date.now();
-            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-            return `FBC-${timestamp}-${random}`;
-        }
-        
-        function calcolaOfferta() {
-            let dettagli = '';
-            let totaleServizio = 0;
-            
-            const famiglie = [
-                { nome: 'Energia', id: 'energia', minPrezzo: 25, maxPrezzo: 600 },
-                { nome: 'Gas', id: 'gas', minPrezzo: 25, maxPrezzo: 600 },
-                { nome: 'Telefonia Mobile', id: 'mobile', minPrezzo: 10, maxPrezzo: 100 },
-                { nome: 'Telefonia Fissa', id: 'fisso', minPrezzo: 10, maxPrezzo: 100 },
-                { nome: 'Connettività Internet', id: 'internet', minPrezzo: 10, maxPrezzo: 250 },
-                { nome: 'Acqua', id: 'acqua', minPrezzo: 25, maxPrezzo: 600 },
-                { nome: 'Gestione Rifiuti', id: 'rifiuti', minPrezzo: 300, maxPrezzo: 300 }
-            ];
-            
-            let totaleDispositivi = 0, totaleConsumo = 0;
-            
-            famiglie.forEach(f => {
-                const disp = parseInt(document.getElementById(f.id + '_dispositivi').value) || 0;
-                totaleDispositivi += disp;
-                if (f.id !== 'rifiuti') totaleConsumo += getConsumo(f.id) / 100000;
-            });
-            
-            famiglie.forEach(f => {
-                const disp = parseInt(document.getElementById(f.id + '_dispositivi').value) || 0;
-                if (disp > 0) {
-                    let prezzoUnitario;
-                    if (f.id === 'internet') {
-                        prezzoUnitario = Math.max(10, 250 - (disp - 1) * 0.24);
-                    } else if (f.id === 'mobile') {
-                        prezzoUnitario = disp <= 5 ? 100 : Math.max(10, 100 - ((disp - 5) * 0.09));
-                    } else if (f.id === 'rifiuti') {
-                        prezzoUnitario = 300;
-                    } else {
-                        const fattoreDispositivi = Math.min(0.95, totaleDispositivi / 1000);
-                        const fattoreConsumo = Math.min(0.95, totaleConsumo / 10);
-                        const riduzione = (fattoreDispositivi + fattoreConsumo) / 2;
-                        prezzoUnitario = f.maxPrezzo - (f.maxPrezzo - f.minPrezzo) * riduzione;
-                    }
-                    const costoFamiglia = prezzoUnitario * disp;
-                    totaleServizio += costoFamiglia;
-                    dettagli += `<div class="dettaglio-line"><span>${f.nome} (${disp} dispositivi)</span><span>€ ${formatEuro(costoFamiglia)}</span></div>`;
-                }
-            });
-            
-            const totaleServizioPrimaDelMinimo = totaleServizio;
-            totaleServizio = Math.max(1800, Math.min(80000, totaleServizio));
-            
-            if (totaleServizioPrimaDelMinimo > 0 && totaleServizioPrimaDelMinimo < 1800) {
-                const adeguamento = 1800 - totaleServizioPrimaDelMinimo;
-                dettagli += `<div class="dettaglio-line"><span>Servizio Assistenza (CA)</span><span>€ ${formatEuro(adeguamento)}</span></div>`;
-            }
-            
-            let totaleOpzioni = 0;
-            
-            if (document.getElementById('opt_gestione_prioritaria').checked) {
-                const percentuale = totaleServizio < 10000 ? 10 : (totaleServizio > 50000 ? 1.5 : 5);
-                const costo = totaleServizio * (percentuale / 100);
+        // Righe PRO
+        let totaleOpzioni = 0;
+
+        if (document.getElementById('opt_consulenza').checked) {
+            const n = parseInt(document.getElementById('num_capitolati').value) || 0;
+            if (n > 0) {
+                const scontoMap = {2:0.10,3:0.15,4:0.20,5:0.25};
+                const sc = scontoMap[n] || 0;
+                const costo = 2000 * n * (1-sc);
                 totaleOpzioni += costo;
-                dettagli += `<div class="dettaglio-line"><span>Gestione Prioritaria Ticket</span><span>€ ${formatEuro(costo)}</span></div>`;
+                const scDesc = sc > 0 ? `, sconto ${sc*100}%` : '';
+                const desc = `RFQ Dedicato (${n} capitolati${scDesc})`, imp = `€ ${formatEuro(costo)}`;
+                righePro.push({desc, imp});
+                htmlPro += dLine(desc, imp);
             }
-            
-            if (document.getElementById('opt_reporting').checked) {
-                const repFamiglie = ['energia','gas','mobile','fisso','internet','acqua','rifiuti'];
-                const nomiRep = { energia:'Energia', gas:'Gas', mobile:'Telefonia Mobile', fisso:'Telefonia Fissa', internet:'Connettività Internet', acqua:'Acqua', rifiuti:'Gestione Rifiuti' };
-                const selezionate = repFamiglie.filter(f => document.getElementById('rep_' + f).checked);
-                const listaRep = selezionate.length > 0 ? selezionate.map(f => nomiRep[f]).join(', ') : 'Nessuna famiglia selezionata';
-                const famAggiuntive = Math.max(0, selezionate.length - 1);
-                const costoReporting = 1000 * Math.pow(1.15, famAggiuntive);
-                totaleOpzioni += costoReporting;
-                dettagli += `<div class="dettaglio-line"><span>Reporting Custom (${listaRep})</span><span>€ ${formatEuro(costoReporting)}</span></div>`;
-            }
-            
-            if (document.getElementById('opt_ai').checked) {
-                const percentuale = totaleServizio < 10000 ? 10 : (totaleServizio > 50000 ? 1.5 : 5);
-                const costo = totaleServizio * (percentuale / 100);
-                totaleOpzioni += costo;
-                dettagli += `<div class="dettaglio-line"><span>Servizi AI Avanzati</span><span>€ ${formatEuro(costo)}</span></div>`;
-            }
-            
-            if (document.getElementById('opt_fatturazione').checked) {
-                let dispFatturazione = 0;
-                if (document.getElementById('fatt_energia').checked) dispFatturazione += parseInt(document.getElementById('energia_dispositivi').value) || 0;
-                if (document.getElementById('fatt_gas').checked) dispFatturazione += parseInt(document.getElementById('gas_dispositivi').value) || 0;
-                if (document.getElementById('fatt_mobile').checked) dispFatturazione += parseInt(document.getElementById('mobile_dispositivi').value) || 0;
-                if (document.getElementById('fatt_fisso').checked) dispFatturazione += parseInt(document.getElementById('fisso_dispositivi').value) || 0;
-                if (document.getElementById('fatt_internet').checked) dispFatturazione += parseInt(document.getElementById('internet_dispositivi').value) || 0;
-                
-                let costoSetup = 0;
-                if (dispFatturazione >= 1 && dispFatturazione <= 20) costoSetup = 260;
-                else if (dispFatturazione >= 21 && dispFatturazione <= 50) costoSetup = 420;
-                else if (dispFatturazione >= 51 && dispFatturazione <= 200) costoSetup = 840;
-                else if (dispFatturazione > 200) costoSetup = 1700;
-                
-                const costoFatturazione = (costoSetup + 3.1 * dispFatturazione) * 1.35;
-                totaleOpzioni += costoFatturazione;
-                dettagli += `<div class="dettaglio-line"><span>Verifica Corretta Fatturazione (${dispFatturazione} dispositivi)</span><span>€ ${formatEuro(costoFatturazione)}</span></div>`;
-            }
-            
-            if (document.getElementById('opt_consulenza').checked) {
-                const numCapitolati = parseInt(document.getElementById('num_capitolati').value) || 0;
-                if (numCapitolati > 0) {
-                    const scontoMap = { 2: 0.10, 3: 0.15, 4: 0.20, 5: 0.25 };
-                    const scontoPerc = scontoMap[numCapitolati] || 0;
-                    const costoBase = 2000 * numCapitolati;
-                    const costoConsulenza = costoBase * (1 - scontoPerc);
-                    totaleOpzioni += costoConsulenza;
-                    const scontoDesc = scontoPerc > 0 ? `, sconto multi-famiglia ${scontoPerc * 100}%` : '';
-                    dettagli += `<div class="dettaglio-line"><span>Consulenza per Gare (${numCapitolati} capitolati${scontoDesc})</span><span>€ ${formatEuro(costoConsulenza)}</span></div>`;
-                }
-            }
-            
-            let totale = totaleServizio + totaleOpzioni;
-            dettagli += `<div class="dettaglio-line" style="border-top: 2px solid #1e40af; margin-top: 15px; padding-top: 15px; font-weight: bold;"><span>Subtotale</span><span>€ ${formatEuro(totale)}</span></div>`;
-            
-            const scontoSales = parseFloat(document.getElementById('sconto_sales').value) || 0;
-            if (scontoSales > 0) {
-                const importoSconto = totale * (scontoSales / 100);
-                totale -= importoSconto;
-                dettagli += `<div class="dettaglio-line"><span>Sconto Sales (${scontoSales}%)</span><span>- € ${formatEuro(importoSconto)}</span></div>`;
-            }
-            
-            if (document.getElementById('sconto_direzione').checked) {
-                dettagli += `<div class="dettaglio-line"><span>Sconto Direzione Commerciale</span><span>Da Autorizzare</span></div>`;
-            }
-            
-            const totaleArrotondato = Math.floor(totale / 100) * 100;
-            const arrotondamento = totale - totaleArrotondato;
-            if (arrotondamento > 0) {
-                dettagli += `<div class="dettaglio-line"><span>Arrotondamento</span><span>- € ${formatEuro(arrotondamento)}</span></div>`;
-            }
+        }
 
-            document.getElementById('dettagli').innerHTML = `<div class="dettaglio">${dettagli}</div>`;
-            document.getElementById('totale_finale').textContent = `€ ${formatEuro(totaleArrotondato)}`;
-            window.uniqueID = generaUniqueID();
-            document.getElementById('risultato').style.display = 'block';
-            document.getElementById('risultato').scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        function downloadOfferta() {
-            let testoOfferta = "==========================================\n";
-            testoOfferta += "   OFFERTA ECONOMICA SERVIZIO CA\n";
-            testoOfferta += "==========================================\n\n";
-            
-            const nomeCliente = document.getElementById('nome_cliente').value || 'N/A';
-            const oggetto = document.getElementById('oggetto').value || 'N/A';
-            const protocollo = document.getElementById('protocollo').value || 'N/A';
-            const dataProposta = document.getElementById('data_proposta').value || new Date().toLocaleDateString('it-IT');
-            const utilityManager = document.getElementById('utility_manager').value || 'N/A';
-            
-            testoOfferta += `Cliente:              ${nomeCliente}\n`;
-            testoOfferta += `Oggetto:              ${oggetto}\n`;
-            testoOfferta += `Protocollo:           ${protocollo}\n`;
-            testoOfferta += `Data Proposta:        ${dataProposta}\n`;
-            testoOfferta += `Utility Manager:      ${utilityManager}\n`;
-            testoOfferta += `Unique ID:            ${window.uniqueID || 'N/A'}\n\n`;
-            testoOfferta += "DETTAGLIO SERVIZI\n";
-            testoOfferta += "------------------------------------------\n\n";
-            
-            document.querySelectorAll('.dettaglio-line').forEach(line => {
-                const spans = line.querySelectorAll('span');
-                if (spans.length === 2) {
-                    testoOfferta += `${spans[0].textContent.trim().padEnd(55)} ${spans[1].textContent.trim().padStart(18)}\n`;
-                }
+        if (document.getElementById('opt_fatturazione').checked) {
+            let dispFatt = 0;
+            ['energia','gas','mobile','fisso','internet'].forEach(f => {
+                if (document.getElementById('fatt_'+f).checked) dispFatt += parseInt(document.getElementById(f+'_dispositivi').value) || 0;
             });
-            
-            testoOfferta += "\n==========================================\n";
-            testoOfferta += `TOTALE: ${document.getElementById('totale_finale').textContent}\n`;
-            testoOfferta += "==========================================\n\n";
-            testoOfferta += "NOTE:\n";
-            testoOfferta += "- Offerta valida 15 giorni\n";
-            testoOfferta += "- Prezzi espressi in Euro\n";
-            testoOfferta += "- IVA esclusa\n\n";
-            
-            if (document.getElementById('sconto_direzione').checked) {
-                testoOfferta += "* Richiesta autorizzazione Direzione Commerciale per scontistica aggiuntiva\n\n";
-            }
-            
-            testoOfferta += "\n------------------------------------------\n";
-            testoOfferta += "Configuratore Economico Servizio CA\n";
-            testoOfferta += `Generato il: ${new Date().toLocaleString('it-IT')}\n\n`;
-            testoOfferta += "Copyright (c) 2026 FBC Group\n";
-            testoOfferta += "Ad uso esclusivo interno\n";
-            
-            const blob = new Blob([testoOfferta], { type: 'text/plain;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = protocollo !== 'N/A' ?
-                `Offerta_CA_${protocollo}_${new Date().toISOString().split('T')[0]}.txt` :
-                `Offerta_CA_${new Date().toISOString().split('T')[0]}.txt`;
-            link.click();
+            const setup = dispFatt<=20 ? 260 : dispFatt<=50 ? 420 : dispFatt<=200 ? 840 : 1700;
+            const costo = (setup + 3.1*dispFatt) * 1.35;
+            totaleOpzioni += costo;
+            const desc = `Servizio Verifica Corretta Fatturazione (${dispFatt} dispositivi)`, imp = `€ ${formatEuro(costo)}`;
+            righePro.push({desc, imp});
+            htmlPro += dLine(desc, imp);
         }
-    </script>
+
+        if (document.getElementById('opt_gestione_prioritaria').checked) {
+            const perc = totaleServizio < 10000 ? 10 : totaleServizio > 50000 ? 1.5 : 5;
+            const costo = totaleServizio * perc / 100;
+            totaleOpzioni += costo;
+            const desc = 'Priority Ticket', imp = `€ ${formatEuro(costo)}`;
+            righePro.push({desc, imp});
+            htmlPro += dLine(desc, imp);
+        }
+
+        if (document.getElementById('opt_reporting').checked) {
+            const nomiRep = {energia:'Energia',gas:'Gas',mobile:'Telefonia Mobile',fisso:'Telefonia Fissa',internet:'Connettività Internet'};
+            const sel = Object.keys(nomiRep).filter(f => document.getElementById('rep_'+f).checked);
+            const lista = sel.length > 0 ? sel.map(f => nomiRep[f]).join(', ') : 'Nessuna famiglia';
+            const costo = 1000 * Math.pow(1.15, Math.max(0, sel.length-1));
+            totaleOpzioni += costo;
+            const desc = `Report Dedicati (${lista})`, imp = `€ ${formatEuro(costo)}`;
+            righePro.push({desc, imp});
+            htmlPro += dLine(desc, imp);
+        }
+
+        // Riepilogo
+        let totale = totaleServizio + totaleOpzioni;
+        { const desc='Subtotale', imp=`€ ${formatEuro(totale)}`; righeRiep.push({desc,imp}); htmlRiep += dLine(desc,imp,true); }
+
+        const scontoSales = parseFloat(document.getElementById('sconto_sales').value) || 0;
+        if (scontoSales > 0) {
+            const imp2 = totale * scontoSales / 100;
+            totale -= imp2;
+            const desc=`Sconto Sales (${scontoSales}%)`, imp=`- € ${formatEuro(imp2)}`;
+            righeRiep.push({desc,imp}); htmlRiep += dLine(desc,imp);
+        }
+        if (document.getElementById('sconto_direzione').checked) {
+            const desc='Sconto Direzione Commerciale', imp='Da Autorizzare';
+            righeRiep.push({desc,imp}); htmlRiep += dLine(desc,imp);
+        }
+        const totArr = Math.floor(totale/100)*100;
+        const arrot = totale - totArr;
+        if (arrot > 0) {
+            const desc='Arrotondamento', imp=`- € ${formatEuro(arrot)}`;
+            righeRiep.push({desc,imp}); htmlRiep += dLine(desc,imp);
+        }
+
+        // Salvo per TXT
+        window.offertaDati = { base:righeBase, pro:righePro, riepilogo:righeRiep, totale:`€ ${formatEuro(totArr)}`, scontoDirezione: document.getElementById('sconto_direzione').checked };
+
+        // HTML riepilogo
+        let html = '';
+        if (htmlBase) html += `<div class="sezione-label">Modulo BASE</div><div class="dettaglio">${htmlBase}</div>`;
+        if (htmlPro)  html += `<div class="sezione-label" style="margin-top:20px;">Modulo PRO</div><div class="dettaglio">${htmlPro}</div>`;
+        html += `<div class="sezione-label" style="margin-top:20px;">Riepilogo Economico</div><div class="dettaglio">${htmlRiep}</div>`;
+
+        // Futuri
+        let htmlFut = '', totFut = 0;
+        famiglieFuture.forEach(f => {
+            const res = calcolaFamiglia(f, totDisp, totCons);
+            if (res) { totFut += res.costo; htmlFut += dLine(`${f.nome} (${res.disp} dispositivi)`, `€ ${formatEuro(res.costo)}`); }
+        });
+        if (htmlFut) {
+            html += `<div style="margin-top:30px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;padding-bottom:12px;border-bottom:1px solid #fde68a;">
+                    <span style="background:#fef3c7;border:1px solid #f59e0b;color:#92400e;font-size:0.75em;font-weight:600;padding:3px 10px;border-radius:2px;letter-spacing:0.5px;text-transform:uppercase;">Anteprima</span>
+                    <span style="color:#92400e;font-size:1.1em;font-weight:500;">Servizi di Futura Attivazione</span>
+                </div>
+                <div class="dettaglio" style="border-color:#fde68a;background:#fffbeb;">${htmlFut}
+                    <div class="dettaglio-line" style="border-top:2px solid #f59e0b;margin-top:15px;padding-top:15px;font-weight:bold;">
+                        <span style="color:#92400e;">Totale indicativo futuri servizi</span>
+                        <span style="color:#92400e;">€ ${formatEuro(totFut)}</span>
+                    </div>
+                </div>
+                <p style="color:#78716c;font-size:0.85em;margin-top:10px;font-style:italic;">* Importi indicativi, non inclusi nel totale dell'offerta</p>
+            </div>`;
+        }
+
+        document.getElementById('dettagli').innerHTML = html;
+        document.getElementById('totale_finale').textContent = `€ ${formatEuro(totArr)}`;
+        window.uniqueID = `FBC-${Date.now()}-${Math.floor(Math.random()*10000).toString().padStart(4,'0')}`;
+        document.getElementById('risultato').style.display = 'block';
+        document.getElementById('risultato').scrollIntoView({behavior:'smooth'});
+    }
+
+    // ── DOWNLOAD TXT ──────────────────────────────────────────────────────────
+    function downloadOfferta() {
+        const d  = window.offertaDati;
+        const sep = t => `\n==========================================\n  ${t}\n==========================================\n\n`;
+        const riga = (desc, imp) => `  ${desc.padEnd(52)} ${imp.padStart(16)}\n`;
+
+        let txt = sep('OFFERTA ECONOMICA - SERVIZIO UTILITY MANAGEMENT');
+        txt += `  Cliente:         ${document.getElementById('nome_cliente').value || 'N/A'}\n`;
+        txt += `  Oggetto:         ${document.getElementById('oggetto').value || 'N/A'}\n`;
+        txt += `  Protocollo:      ${document.getElementById('protocollo').value || 'N/A'}\n`;
+        txt += `  Data Proposta:   ${document.getElementById('data_proposta').value || ''}\n`;
+        txt += `  Utility Manager: ${document.getElementById('utility_manager').value || 'N/A'}\n`;
+        txt += `  Unique ID:       ${window.uniqueID || 'N/A'}\n`;
+
+        txt += sep('MODULO BASE');
+        txt += "  Servizi inclusi:\n";
+        ['Piattaforma Nostromo','Ticketing e Caring','Monitoraggio Costi e Consumi',
+         'Previsionale di Spesa','Negoziazione','Prompt-IA','Audit Energetico']
+            .forEach(s => txt += `    * ${s}\n`);
+        txt += "\n  Dettaglio economico:\n\n";
+        if (d.base.length > 0) d.base.forEach(r => txt += riga(r.desc, r.imp));
+        else txt += "  Nessuna famiglia configurata\n";
+
+        txt += sep('MODULO PRO');
+        if (d.pro.length > 0) d.pro.forEach(r => txt += riga(r.desc, r.imp));
+        else txt += "  Nessuna opzione PRO selezionata\n";
+
+        txt += sep('RIEPILOGO ECONOMICO');
+        d.riepilogo.forEach(r => txt += riga(r.desc, r.imp));
+        txt += "\n";
+        txt += riga('TOTALE OFFERTA', d.totale);
+
+        txt += "\n==========================================\n";
+        txt += "  NOTE:\n  - Offerta valida 30 giorni\n  - Prezzi espressi in Euro\n  - IVA esclusa\n";
+        if (d.scontoDirezione) txt += "  * Richiesta autorizzazione Direzione Commerciale\n";
+        txt += "\n------------------------------------------\n";
+        txt += `  Generato il: ${new Date().toLocaleString('it-IT')}\n`;
+        txt += "  Copyright (c) 2026 FBC Group - Ad uso esclusivo interno\n";
+
+        const protocollo = document.getElementById('protocollo').value || '';
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([txt], {type:'text/plain;charset=utf-8'}));
+        link.download = protocollo ? `Offerta_UM_${protocollo}_${new Date().toISOString().split('T')[0]}.txt` : `Offerta_UM_${new Date().toISOString().split('T')[0]}.txt`;
+        link.click();
+    }
+</script>
 </body>
 </html>

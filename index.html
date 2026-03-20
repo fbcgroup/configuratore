@@ -298,7 +298,15 @@
                         <div id="fatturazione_famiglie" class="sub-famiglie hidden">
                             <p>Seleziona le famiglie da includere:</p>
                             <div class="checkbox-group"><input type="checkbox" id="fatt_energia"><label for="fatt_energia">Energia</label></div>
+                            <div id="fatt_energia_pdp_wrap" class="hidden" style="margin:0 0 10px 32px;">
+                                <label style="text-transform:none;letter-spacing:0;font-size:0.85em;color:#6b7280;">PDP soggetti al servizio</label>
+                                <input type="number" id="fatt_energia_pdp" min="0" value="0" style="max-width:120px;">
+                            </div>
                             <div class="checkbox-group"><input type="checkbox" id="fatt_gas"><label for="fatt_gas">Gas</label></div>
+                            <div id="fatt_gas_pdp_wrap" class="hidden" style="margin:0 0 10px 32px;">
+                                <label style="text-transform:none;letter-spacing:0;font-size:0.85em;color:#6b7280;">PDP soggetti al servizio</label>
+                                <input type="number" id="fatt_gas_pdp" min="0" value="0" style="max-width:120px;">
+                            </div>
                             <div id="avviso_fatt" class="hidden" style="margin-top:10px;padding:10px 14px;background:#fff7ed;border:1px solid #f59e0b;border-radius:2px;color:#92400e;font-size:0.88em;font-weight:600;">⚠️ Attenzione! Selezionare almeno una delle voci</div>
                         </div>
                     </div>
@@ -325,6 +333,41 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- GESTIONE BUDGET (solo utenti autorizzati) -->
+            <div class="section hidden" id="sezione_budget">
+                <div class="section-header"><h2>Gestione Budget</h2></div>
+                <div style="padding:20px 25px;background:#f0f4ff;border:1px solid #c7d7fd;border-radius:2px;margin-bottom:25px;">
+                    <p style="font-size:0.85em;color:#1e3a8a;font-weight:500;">Inserisci il budget del cliente. Il sistema calcolerà automaticamente la scontistica necessaria per allineare l'offerta al budget, mantenendo invariate le regole di calcolo.</p>
+                </div>
+                <div class="input-group">
+                    <div>
+                        <label>Budget Cliente (€)</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="budget_cliente" min="0" step="100" placeholder="es. 5000" oninput="aggiornaBudget()">
+                            <span class="input-unit">€</span>
+                        </div>
+                    </div>
+                    <div id="budget_risultato" class="hidden" style="display:flex;flex-direction:column;justify-content:center;gap:8px;">
+                        <div style="font-size:0.85em;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:0.3px;">Riepilogo Budget</div>
+                        <div style="display:flex;gap:30px;flex-wrap:wrap;">
+                            <div>
+                                <div style="font-size:0.8em;color:#6b7280;text-transform:uppercase;letter-spacing:0.3px;">Importo calcolato</div>
+                                <div id="budget_importo_calcolato" style="font-size:1.3em;font-weight:600;color:#1e3a8a;">—</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.8em;color:#6b7280;text-transform:uppercase;letter-spacing:0.3px;">Sconto necessario</div>
+                                <div id="budget_sconto_perc" style="font-size:1.3em;font-weight:600;color:#b45309;">—</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.8em;color:#6b7280;text-transform:uppercase;letter-spacing:0.3px;">Importo a budget</div>
+                                <div id="budget_importo_finale" style="font-size:1.3em;font-weight:600;color:#1e6b3a;">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="budget_avviso" class="hidden" style="margin-top:15px;padding:12px 18px;border-radius:2px;font-size:0.9em;font-weight:600;"></div>
             </div>
 
             <!-- SCONTISTICHE -->
@@ -444,8 +487,11 @@
     document.getElementById('opt_fatturazione').addEventListener('change', function() {
         document.getElementById('fatturazione_famiglie').classList.toggle('hidden', !this.checked);
         if (!this.checked) {
-            document.getElementById('fatt_energia').checked = false;
-            document.getElementById('fatt_gas').checked = false;
+            ['fatt_energia','fatt_gas'].forEach(id => {
+                document.getElementById(id).checked = false;
+                document.getElementById(id + '_pdp_wrap').classList.add('hidden');
+                document.getElementById(id + '_pdp').value = 0;
+            });
             document.getElementById('avviso_fatt').classList.add('hidden');
         } else {
             document.getElementById('avviso_fatt').classList.remove('hidden');
@@ -453,6 +499,18 @@
     });
     ['fatt_energia','fatt_gas'].forEach(id => {
         document.getElementById(id).addEventListener('change', function() {
+            const famiglia = id.replace('fatt_','');
+            const wrap  = document.getElementById(id + '_pdp_wrap');
+            const input = document.getElementById(id + '_pdp');
+            if (this.checked) {
+                const pdpDichiarati = parseInt(document.getElementById(famiglia + '_dispositivi').value) || 0;
+                input.value = pdpDichiarati;
+                input.max   = pdpDichiarati;
+                wrap.classList.remove('hidden');
+            } else {
+                wrap.classList.add('hidden');
+                input.value = 0;
+            }
             const hasSel = document.getElementById('fatt_energia').checked || document.getElementById('fatt_gas').checked;
             document.getElementById('avviso_fatt').classList.toggle('hidden', hasSel);
         });
@@ -480,7 +538,98 @@
         });
     });
 
-    // ── UTILITY ───────────────────────────────────────────────────────────────
+    // ── GESTIONE BUDGET ───────────────────────────────────────────────────────
+    function isAutorizzato() {
+        const um = (document.getElementById('utility_manager').value || '').trim().toLowerCase();
+        return ['bevilacqua','bussini','pallotta','gandolfi'].some(n => um.includes(n));
+    }
+
+    document.getElementById('utility_manager').addEventListener('input', function() {
+        document.getElementById('sezione_budget').classList.toggle('hidden', !isAutorizzato());
+    });
+
+    function calcolaTotaleCorrente() {
+        // Ricalcola il totale con le stesse regole di calcolaOfferta() senza modificare il DOM
+        const famiglie = [
+            {nome:'Energia',               id:'energia', minPrezzo:25,  maxPrezzo:600},
+            {nome:'Gas',                   id:'gas',     minPrezzo:25,  maxPrezzo:600},
+            {nome:'Telefonia Mobile',      id:'mobile',  minPrezzo:10,  maxPrezzo:100},
+            {nome:'Telefonia Fissa',       id:'fisso',   minPrezzo:10,  maxPrezzo:100},
+            {nome:'Connettività Internet', id:'internet',minPrezzo:10,  maxPrezzo:250}
+        ];
+        let totDisp = 0, totCons = 0;
+        famiglie.forEach(f => {
+            totDisp += parseInt(document.getElementById(f.id+'_dispositivi').value) || 0;
+            if (['energia','gas'].includes(f.id)) totCons += getConsumo(f.id) / 100000;
+        });
+        let totaleServizio = 0;
+        famiglie.forEach(f => {
+            const res = calcolaFamiglia(f, totDisp, totCons);
+            if (res) totaleServizio += res.costo;
+        });
+        const totPrimaMin = totaleServizio;
+        totaleServizio = Math.max(1800, Math.min(80000, totaleServizio));
+
+        let totaleOpzioni = 0;
+        if (document.getElementById('opt_consulenza').checked) {
+            const n = parseInt(document.getElementById('num_capitolati').value) || 0;
+            const hasFamiglie = document.querySelectorAll('.cons-famiglia:checked').length > 0;
+            if (n > 0 && hasFamiglie) {
+                const scontoMap = {2:0.10,3:0.15,4:0.20,5:0.25};
+                const sc = scontoMap[n] || 0;
+                totaleOpzioni += 2000 * n * (1 - sc);
+            }
+        }
+        const fattRes = calcolaFatturazione();
+        if (fattRes) totaleOpzioni += fattRes.costo;
+        if (document.getElementById('opt_gestione_prioritaria').checked) {
+            const perc = totaleServizio < 10000 ? 10 : totaleServizio > 50000 ? 1.5 : 5;
+            totaleOpzioni += totaleServizio * perc / 100;
+        }
+        if (document.getElementById('opt_reporting').checked) {
+            const nomiRep = {energia:'Energia',gas:'Gas',mobile:'Telefonia Mobile',fissoint:'Telefonia Fissa & Connettività'};
+            const sel = Object.keys(nomiRep).filter(f => document.getElementById('rep_'+f).checked);
+            if (sel.length > 0) totaleOpzioni += 1000 * Math.pow(1.15, Math.max(0, sel.length-1));
+        }
+        let totale = totaleServizio + totaleOpzioni;
+        const scontoSales = parseFloat(document.getElementById('sconto_sales').value) || 0;
+        if (scontoSales > 0) totale -= totale * scontoSales / 100;
+        return Math.floor(totale / 100) * 100;
+    }
+
+    function aggiornaBudget() {
+        const budget = parseFloat(document.getElementById('budget_cliente').value) || 0;
+        const avviso = document.getElementById('budget_avviso');
+        const risultato = document.getElementById('budget_risultato');
+
+        if (budget <= 0) {
+            risultato.classList.add('hidden');
+            avviso.classList.add('hidden');
+            return;
+        }
+
+        const totale = calcolaTotaleCorrente();
+        risultato.classList.remove('hidden');
+        risultato.style.display = 'flex';
+
+        document.getElementById('budget_importo_calcolato').textContent = `€ ${formatEuro(totale)}`;
+
+        if (budget >= totale) {
+            document.getElementById('budget_sconto_perc').textContent = '0,00%';
+            document.getElementById('budget_importo_finale').textContent = `€ ${formatEuro(totale)}`;
+            avviso.style.cssText = 'margin-top:15px;padding:12px 18px;border-radius:2px;font-size:0.9em;font-weight:600;background:#f0fdf4;border:1px solid #86efac;color:#166534;';
+            avviso.textContent = '✓ Il budget è sufficiente a coprire l\'importo calcolato.';
+            avviso.classList.remove('hidden');
+        } else {
+            const sconto = ((totale - budget) / totale) * 100;
+            const importoSconto = totale - budget;
+            document.getElementById('budget_sconto_perc').textContent = `${sconto.toFixed(2).replace('.',',')}%`;
+            document.getElementById('budget_importo_finale').textContent = `€ ${formatEuro(budget)}`;
+            avviso.style.cssText = 'margin-top:15px;padding:12px 18px;border-radius:2px;font-size:0.9em;font-weight:600;background:#f0f4ff;border:1px solid #c7d7fd;color:#1e3a8a;';
+            avviso.textContent = `ℹ️ Sconto applicato: € ${formatEuro(importoSconto)} (${sconto.toFixed(2).replace('.',',')}%). In qualità di figura dirigenziale, lo sconto è applicabile direttamente.`;
+            avviso.classList.remove('hidden');
+        }
+    }
     function getConsumo(f) {
         const radioEl = document.querySelector(`input[name="${f}_consumo_tipo"]:checked`);
         if (!radioEl) return 0;
@@ -573,8 +722,8 @@
         const fattGas     = document.getElementById('fatt_gas').checked;
         if (!fattEnergia && !fattGas) return null;
         let dispFatt = 0;
-        if (fattEnergia) dispFatt += parseInt(document.getElementById('energia_dispositivi').value) || 0;
-        if (fattGas)     dispFatt += parseInt(document.getElementById('gas_dispositivi').value) || 0;
+        if (fattEnergia) dispFatt += parseInt(document.getElementById('fatt_energia_pdp').value) || 0;
+        if (fattGas)     dispFatt += parseInt(document.getElementById('fatt_gas_pdp').value) || 0;
         const setup = dispFatt <= 20 ? 260 : dispFatt <= 50 ? 420 : dispFatt <= 200 ? 840 : 1700;
         const costo = (setup + 3.1 * dispFatt * 12) * 1.35;
         return { dispFatt, setup, costo };
@@ -704,7 +853,9 @@
         window.offertaDati = {
             base: righeBase, pro: righePro, riepilogo: righeRiep,
             totale: `€ ${formatEuro(totArr)}`,
-            scontoDirezione: document.getElementById('sconto_direzione').checked
+            totaleNum: totArr,
+            scontoDirezione: document.getElementById('sconto_direzione').checked,
+            budget: parseFloat(document.getElementById('budget_cliente').value) || 0
         };
 
         // HTML risultato
@@ -736,6 +887,22 @@
                     </div>
                 </div>
                 <p style="color:#78716c;font-size:0.85em;margin-top:10px;font-style:italic;">* Importi indicativi, non inclusi nel totale dell'offerta</p>
+            </div>`;
+        }
+
+        // Sezione budget nel riepilogo
+        if (window.offertaDati.budget > 0 && window.offertaDati.budget < totArr) {
+            const b = window.offertaDati.budget;
+            const scontoBudgetVal = totArr - b;
+            const scontoBudgetPerc = ((scontoBudgetVal / totArr) * 100).toFixed(2).replace('.',',');
+            html += `<div class="sezione-label" style="margin-top:20px;color:#1e6b3a;border-bottom-color:#1e6b3a;">Offerta Allineata al Budget</div>
+            <div class="dettaglio" style="border-color:#86efac;background:#f0fdf4;">
+                ${dLine('Importo offerta originale', `€ ${formatEuro(totArr)}`)}
+                ${dLine(`Sconto budget (${scontoBudgetPerc}%)`, `- € ${formatEuro(scontoBudgetVal)}`)}
+                <div class="dettaglio-line" style="border-top:2px solid #1e6b3a;margin-top:15px;padding-top:15px;font-weight:bold;">
+                    <span style="color:#166534;">Importo allineato al budget</span>
+                    <span style="color:#166534;">€ ${formatEuro(b)}</span>
+                </div>
             </div>`;
         }
 
@@ -786,6 +953,17 @@
         txt += sep('RIEPILOGO ECONOMICO');
         d.riepilogo.forEach(r => txt += riga(r.desc, r.imp));
         txt += "\n" + riga('TOTALE OFFERTA', d.totale);
+
+        if (d.budget > 0 && d.budget < d.totaleNum) {
+            const scontoBudgetVal = d.totaleNum - d.budget;
+            const scontoBudgetPerc = ((scontoBudgetVal / d.totaleNum) * 100).toFixed(2).replace('.',',');
+            txt += sep('OFFERTA ALLINEATA AL BUDGET');
+            txt += riga('Importo offerta originale', d.totale);
+            txt += riga(`Sconto budget (${scontoBudgetPerc}%)`, `- € ${formatEuro(scontoBudgetVal)}`);
+            txt += riga('Budget Cliente', `€ ${formatEuro(d.budget)}`);
+            txt += '\n' + riga('IMPORTO ALLINEATO AL BUDGET', `€ ${formatEuro(d.budget)}`);
+            txt += `\n  Nota: sconto applicato direttamente in qualità di figura dirigenziale.\n`;
+        }
 
         txt += "\n==========================================\n";
         txt += "  NOTE:\n  - Offerta valida 30 giorni\n  - Prezzi espressi in Euro\n  - IVA esclusa\n";
@@ -1001,6 +1179,20 @@
         txt += '\n' + '─'.repeat(60) + '\n';
         txt += riga('TOTALE OFFERTA', `€ ${formatEuro(totArr)}`);
         txt += '─'.repeat(60) + '\n';
+
+        const dBudget = window.offertaDati.budget;
+        if (dBudget > 0 && dBudget < totArr) {
+            const scontoBudgetVal = totArr - dBudget;
+            const scontoBudgetPerc = ((scontoBudgetVal / totArr) * 100).toFixed(2).replace('.',',');
+            txt += sep('CRITERI ECONOMICI — ALLINEAMENTO AL BUDGET');
+            txt += `  Budget indicato dal responsabile: € ${formatEuro(dBudget)}\n\n`;
+            txt += riga('Importo offerta calcolato', `€ ${formatEuro(totArr)}`);
+            txt += riga('Sconto necessario per allineamento', `${scontoBudgetPerc}%`);
+            txt += riga('Importo sconto', `- € ${formatEuro(scontoBudgetVal)}`);
+            txt += '\n' + riga('IMPORTO FINALE A BUDGET', `€ ${formatEuro(dBudget)}`);
+            txt += `\n  Nota: sconto applicabile direttamente in qualità di figura dirigenziale autorizzata.\n`;
+            txt += `  Non è richiesta ulteriore autorizzazione dalla Direzione Commerciale.\n`;
+        }
         txt += `\n  Generato il: ${new Date().toLocaleString('it-IT')}\n`;
         txt += '  Copyright (c) 2026 FBC Group - Ad uso esclusivo interno\n';
 

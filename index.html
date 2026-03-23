@@ -408,6 +408,35 @@
                     <button onclick="downloadOfferta()" style="background:white;color:#1e3a8a;border:2px solid #1e3a8a;padding:12px 40px;font-size:1em;">Scarica Offerta (TXT)</button>
                     <button id="btn_calcoli" onclick="downloadCalcoli()" style="background:white;color:#1e6b3a;border:2px solid #1e6b3a;padding:12px 40px;font-size:1em;display:none;">Genera File di Calcolo (TXT)</button>
                 </div>
+
+                <!-- LOG CONFIGURAZIONI (solo Ivan Gandolfi) -->
+                <div id="log_panel" class="hidden" style="margin-top:40px;border:1px solid #e5e7eb;border-radius:2px;overflow:hidden;">
+                    <div style="background:linear-gradient(135deg,#1e3a8a,#1e40af);padding:18px 25px;display:flex;align-items:center;justify-content:space-between;">
+                        <div>
+                            <span style="color:white;font-size:1em;font-weight:600;">📋 Log Configurazioni</span>
+                            <span id="log_count" style="background:rgba(255,255,255,0.2);color:white;font-size:0.78em;font-weight:700;padding:2px 10px;border-radius:10px;margin-left:10px;">0</span>
+                        </div>
+                        <button onclick="downloadLog()" style="background:white;color:#1e3a8a;border:none;padding:7px 20px;font-size:0.85em;font-weight:600;border-radius:2px;cursor:pointer;box-shadow:none;text-transform:none;letter-spacing:0;">⬇ Scarica Log (TXT)</button>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table style="width:100%;border-collapse:collapse;font-family:inherit;">
+                            <thead>
+                                <tr style="background:#f5f7fa;">
+                                    <th style="padding:10px;text-align:left;font-size:0.78em;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;">#</th>
+                                    <th style="padding:10px;text-align:left;font-size:0.78em;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Timestamp</th>
+                                    <th style="padding:10px;text-align:left;font-size:0.78em;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Cliente</th>
+                                    <th style="padding:10px;text-align:left;font-size:0.78em;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Protocollo</th>
+                                    <th style="padding:10px;text-align:left;font-size:0.78em;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Famiglie</th>
+                                    <th style="padding:10px;text-align:left;font-size:0.78em;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Modulo PRO</th>
+                                    <th style="padding:10px;text-align:left;font-size:0.78em;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Totale</th>
+                                    <th style="padding:10px;text-align:left;font-size:0.78em;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Budget</th>
+                                    <th style="padding:10px;text-align:left;font-size:0.78em;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Sconto Sales</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log_tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -537,6 +566,101 @@
             document.getElementById('avviso_cons').classList.toggle('hidden', count > 0);
         });
     });
+
+    // ── LOG CONFIGURAZIONI ────────────────────────────────────────────────────
+    window._configLog = [];
+
+    function isIvanGandolfi() {
+        const um = (document.getElementById('utility_manager').value || '').trim().toLowerCase();
+        return um.includes('gandolfi') && um.includes('ivan');
+    }
+
+    function aggiungiLog(totaleCalcolato, budgetIndicato) {
+        const entry = {
+            timestamp: new Date().toLocaleString('it-IT'),
+            uniqueID: window.uniqueID || '—',
+            cliente: document.getElementById('nome_cliente').value || '—',
+            protocollo: document.getElementById('protocollo').value || '—',
+            utilityManager: document.getElementById('utility_manager').value || '—',
+            famiglie: [],
+            moduloPRO: [],
+            totaleCalcolato,
+            budgetIndicato: budgetIndicato || null,
+            scontoSales: parseFloat(document.getElementById('sconto_sales').value) || 0
+        };
+        // famiglie attive
+        ['energia','gas','mobile','fisso','internet'].forEach(id => {
+            const d = parseInt(document.getElementById(id+'_dispositivi').value) || 0;
+            if (d > 0) entry.famiglie.push(`${id}:${d}`);
+        });
+        // modulo pro
+        if (document.getElementById('opt_consulenza').checked && document.querySelectorAll('.cons-famiglia:checked').length > 0)
+            entry.moduloPRO.push('RFQ');
+        if (document.getElementById('opt_fatturazione').checked &&
+            (document.getElementById('fatt_energia').checked || document.getElementById('fatt_gas').checked))
+            entry.moduloPRO.push('Fatturazione');
+        if (document.getElementById('opt_gestione_prioritaria').checked)
+            entry.moduloPRO.push('PriorityTicket');
+        if (document.getElementById('opt_reporting').checked &&
+            document.querySelectorAll('[id^="rep_"]:checked').length > 0)
+            entry.moduloPRO.push('Report');
+        window._configLog.push(entry);
+        aggiornaViewLog();
+    }
+
+    function aggiornaViewLog() {
+        const panel = document.getElementById('log_panel');
+        if (!panel) return;
+        const tbody = document.getElementById('log_tbody');
+        tbody.innerHTML = '';
+        window._configLog.slice().reverse().forEach((e, i) => {
+            const tr = document.createElement('tr');
+            const idx = window._configLog.length - i;
+            tr.innerHTML = `
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:0.82em;color:#6b7280;">#${idx}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:0.82em;">${e.timestamp}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:0.82em;font-weight:600;">${e.cliente}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:0.82em;">${e.protocollo}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:0.82em;">${e.famiglie.join(', ') || '—'}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:0.82em;">${e.moduloPRO.join(', ') || '—'}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:0.82em;font-weight:600;color:#1e3a8a;">€ ${formatEuro(e.totaleCalcolato)}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:0.82em;color:#1e6b3a;">${e.budgetIndicato ? '€ '+formatEuro(e.budgetIndicato) : '—'}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:0.82em;">${e.scontoSales > 0 ? e.scontoSales+'%' : '—'}</td>`;
+            tbody.appendChild(tr);
+        });
+        document.getElementById('log_count').textContent = window._configLog.length;
+    }
+
+    function downloadLog() {
+        const sep = '='.repeat(70);
+        let txt = `${sep}\n  LOG CONFIGURAZIONI — CONFIGURATORE UTILITY MANAGEMENT\n${sep}\n`;
+        txt += `  Generato il: ${new Date().toLocaleString('it-IT')}\n`;
+        txt += `  Totale configurazioni registrate: ${window._configLog.length}\n\n`;
+        window._configLog.forEach((e, i) => {
+            txt += `${'-'.repeat(70)}\n`;
+            txt += `  Configurazione #${i+1}\n`;
+            txt += `  Timestamp:          ${e.timestamp}\n`;
+            txt += `  Unique ID:          ${e.uniqueID}\n`;
+            txt += `  Cliente:            ${e.cliente}\n`;
+            txt += `  Protocollo:         ${e.protocollo}\n`;
+            txt += `  Utility Manager:    ${e.utilityManager}\n`;
+            txt += `  Famiglie attive:    ${e.famiglie.join(', ') || 'nessuna'}\n`;
+            txt += `  Modulo PRO:         ${e.moduloPRO.join(', ') || 'nessuno'}\n`;
+            txt += `  Totale calcolato:   € ${formatEuro(e.totaleCalcolato)}\n`;
+            if (e.budgetIndicato) {
+                const sc = ((e.totaleCalcolato - e.budgetIndicato) / e.totaleCalcolato * 100).toFixed(2);
+                txt += `  Budget indicato:    € ${formatEuro(e.budgetIndicato)}\n`;
+                txt += `  Sconto budget:      ${sc}%\n`;
+            }
+            if (e.scontoSales > 0) txt += `  Sconto Sales:       ${e.scontoSales}%\n`;
+            txt += '\n';
+        });
+        txt += `${sep}\n  Copyright (c) 2026 FBC Group - Ad uso esclusivo interno\n`;
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([txt], {type:'text/plain;charset=utf-8'}));
+        link.download = `Log_Configurazioni_UM_${new Date().toISOString().split('T')[0]}.txt`;
+        link.click();
+    }
 
     // ── GESTIONE BUDGET ───────────────────────────────────────────────────────
     function isAutorizzato() {
@@ -919,6 +1043,13 @@
         const btnCalcoli = document.getElementById('btn_calcoli');
         if (autorizzati.some(n => umVal.includes(n))) btnCalcoli.style.display = '';
         else btnCalcoli.style.display = 'none';
+
+        // Log configurazione
+        aggiungiLog(totArr, window.offertaDati.budget > 0 ? window.offertaDati.budget : null);
+
+        // Mostra panel log solo per Ivan Gandolfi
+        const logPanel = document.getElementById('log_panel');
+        if (logPanel) logPanel.classList.toggle('hidden', !isIvanGandolfi());
         document.getElementById('risultato').style.display = 'block';
         document.getElementById('risultato').scrollIntoView({behavior:'smooth'});
     }

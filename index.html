@@ -71,6 +71,7 @@
     <div class="header">
         <h1>Configuratore Servizio Utility Management</h1>
         <div class="subtitle">Strumento di configurazione e preventivazione servizi</div>
+        <div id="visite_counter" style="margin-top:10px;font-size:0.72em;color:rgba(255,255,255,0.45);font-weight:300;letter-spacing:0.3px;"></div>
     </div>
 
     <div class="content">
@@ -447,6 +448,20 @@
 <script>
     document.getElementById('data_proposta').valueAsDate = new Date();
 
+    // ── CONTATORE VISITE ──────────────────────────────────────────────────────
+    (async () => {
+        try {
+            const key = 'visite_configuratore';
+            let visite = 1;
+            try {
+                const res = await window.storage.get(key, true);
+                visite = (parseInt(res.value) || 0) + 1;
+            } catch(e) { visite = 1; }
+            await window.storage.set(key, String(visite), true);
+            document.getElementById('visite_counter').textContent = `Sessioni di utilizzo: ${visite.toLocaleString('it-IT')}`;
+        } catch(e) {}
+    })();
+
     // ── VALIDAZIONE ───────────────────────────────────────────────────────────
     function validaInformazioniOfferta(event) {
         const fields = ['nome_cliente','oggetto','protocollo','utility_manager'];
@@ -670,6 +685,12 @@
 
     document.getElementById('utility_manager').addEventListener('input', function() {
         document.getElementById('sezione_budget').classList.toggle('hidden', !isAutorizzato());
+        // Log panel visibile solo a Ivan Gandolfi
+        const logPanel = document.getElementById('log_panel');
+        if (logPanel) {
+            logPanel.classList.toggle('hidden', !isIvanGandolfi());
+            if (isIvanGandolfi()) aggiornaViewLog();
+        }
     });
 
     function calcolaTotaleCorrente() {

@@ -451,15 +451,13 @@
     // ── CONTATORE VISITE ──────────────────────────────────────────────────────
     (async () => {
         try {
-            const key = 'visite_configuratore';
-            let visite = 1;
-            try {
-                const res = await window.storage.get(key, true);
-                visite = (parseInt(res.value) || 0) + 1;
-            } catch(e) { visite = 1; }
-            await window.storage.set(key, String(visite), true);
+            const res = await fetch('https://api.counterapi.dev/v1/fbcgroup/configuratore-um/up');
+            const data = await res.json();
+            const visite = data.count || 0;
             document.getElementById('visite_counter').textContent = `Sessioni di utilizzo: ${visite.toLocaleString('it-IT')}`;
-        } catch(e) {}
+        } catch(e) {
+            document.getElementById('visite_counter').textContent = '';
+        }
     })();
 
     // ── VALIDAZIONE ───────────────────────────────────────────────────────────
